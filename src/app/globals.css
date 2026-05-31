@@ -1,0 +1,142 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * FAIRPOOL theme tokens.
+ * Light + dark share the same variable names so components never branch.
+ * Primary brand colour: #1B7C8A teal -> hsl(185 65% 32%).
+ */
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 215 25% 12%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 215 25% 12%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 25% 12%;
+
+    --primary: 185 65% 32%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 185 30% 94%;
+    --secondary-foreground: 185 50% 20%;
+
+    --muted: 210 20% 96%;
+    --muted-foreground: 215 15% 45%;
+
+    --accent: 185 40% 92%;
+    --accent-foreground: 185 60% 22%;
+
+    --destructive: 0 72% 48%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 215 16% 88%;
+    --input: 215 16% 88%;
+    --ring: 185 65% 32%;
+
+    --sidebar: 0 0% 100%;
+    --sidebar-foreground: 215 25% 18%;
+    --sidebar-accent: 185 40% 94%;
+    --sidebar-accent-foreground: 185 60% 22%;
+    --sidebar-border: 215 16% 90%;
+    --sidebar-ring: 185 65% 32%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 200 20% 8%; /* #0E1215 */
+    --foreground: 0 0% 95%;
+
+    --card: 200 16% 11%;
+    --card-foreground: 0 0% 95%;
+
+    --popover: 200 16% 11%;
+    --popover-foreground: 0 0% 95%;
+
+    --primary: 185 60% 42%;
+    --primary-foreground: 200 20% 8%;
+
+    --secondary: 200 14% 16%;
+    --secondary-foreground: 0 0% 92%;
+
+    --muted: 200 12% 16%;
+    --muted-foreground: 210 12% 65%;
+
+    --accent: 185 40% 18%;
+    --accent-foreground: 185 50% 80%;
+
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 200 12% 20%;
+    --input: 200 12% 22%;
+    --ring: 185 60% 50%;
+
+    --sidebar: 200 18% 10%;
+    --sidebar-foreground: 0 0% 90%;
+    --sidebar-accent: 185 40% 18%;
+    --sidebar-accent-foreground: 185 50% 80%;
+    --sidebar-border: 200 12% 20%;
+    --sidebar-ring: 185 60% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-background text-foreground font-bengali antialiased;
+    /* Smooth theme transitions. */
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+}
+
+/* Animated GPS user marker used by the MapLibre LocationMap. */
+.fp-user-marker {
+  position: relative;
+  width: 22px;
+  height: 22px;
+  pointer-events: none;
+}
+.fp-user-ping {
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  background: rgba(27, 124, 138, 0.55);
+  animation: fp-ping 1.6s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+.fp-user-dot {
+  position: absolute;
+  inset: 5px;
+  border-radius: 9999px;
+  background: #1b7c8a;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 10px 2px rgba(95, 224, 230, 0.7);
+}
+@keyframes fp-ping {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.8;
+  }
+  75%,
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+
+/* Thin scrollbar for the register page scroll area. */
+.fp-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.fp-scroll::-webkit-scrollbar-thumb {
+  @apply bg-primary/40 rounded-full;
+}
