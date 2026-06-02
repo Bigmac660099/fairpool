@@ -2,104 +2,242 @@
 @tailwind components;
 @tailwind utilities;
 
-/*
- * FAIRPOOL theme tokens.
- * Light + dark share the same variable names so components never branch.
- * Primary brand colour: #1B7C8A teal -> hsl(185 65% 32%).
- */
+/* ═══════════════════════════════════════════════════════════════════
+   FAIRPOOL — global design tokens, utilities, and keyframes.
+   Primary brand: #1B7C8A (teal) → hsl(185 65% 32%)
+   Accent ramp:   teal-400 (#2dd4bf) → emerald-400 (#34d399)
+   ═══════════════════════════════════════════════════════════════════ */
+
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 215 25% 12%;
-
+    /* ── Surfaces ── */
+    --background: 0 0% 99%;
+    --foreground: 215 28% 10%;
     --card: 0 0% 100%;
-    --card-foreground: 215 25% 12%;
-
+    --card-foreground: 215 28% 10%;
     --popover: 0 0% 100%;
-    --popover-foreground: 215 25% 12%;
+    --popover-foreground: 215 28% 10%;
 
+    /* ── Brand ── */
     --primary: 185 65% 32%;
     --primary-foreground: 0 0% 100%;
 
+    /* ── Supporting ── */
     --secondary: 185 30% 94%;
-    --secondary-foreground: 185 50% 20%;
-
-    --muted: 210 20% 96%;
-    --muted-foreground: 215 15% 45%;
-
-    --accent: 185 40% 92%;
-    --accent-foreground: 185 60% 22%;
-
+    --secondary-foreground: 185 50% 18%;
+    --muted: 210 18% 95%;
+    --muted-foreground: 215 14% 44%;
+    --accent: 185 38% 91%;
+    --accent-foreground: 185 60% 20%;
     --destructive: 0 72% 48%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 215 16% 88%;
-    --input: 215 16% 88%;
+    /* ── Borders / ring ── */
+    --border: 215 14% 87%;
+    --input: 215 14% 87%;
     --ring: 185 65% 32%;
 
-    --sidebar: 0 0% 100%;
-    --sidebar-foreground: 215 25% 18%;
-    --sidebar-accent: 185 40% 94%;
-    --sidebar-accent-foreground: 185 60% 22%;
-    --sidebar-border: 215 16% 90%;
+    /* ── Sidebar ── */
+    --sidebar: 0 0% 99%;
+    --sidebar-foreground: 215 28% 16%;
+    --sidebar-accent: 185 38% 93%;
+    --sidebar-accent-foreground: 185 60% 20%;
+    --sidebar-border: 215 14% 89%;
     --sidebar-ring: 185 65% 32%;
 
-    --radius: 0.5rem;
+    /* ── Shape ── */
+    --radius: 0.875rem;
+
+    /* ── Gradient stops (reused in utilities) ── */
+    --grad-from: hsl(185 65% 32%);
+    --grad-to: #2dd4bf;
   }
 
   .dark {
-    --background: 200 20% 8%; /* #0E1215 */
-    --foreground: 0 0% 95%;
+    --background: 200 22% 7%;
+    --foreground: 0 0% 94%;
+    --card: 200 18% 10%;
+    --card-foreground: 0 0% 94%;
+    --popover: 200 18% 10%;
+    --popover-foreground: 0 0% 94%;
 
-    --card: 200 16% 11%;
-    --card-foreground: 0 0% 95%;
+    --primary: 185 58% 44%;
+    --primary-foreground: 200 22% 7%;
 
-    --popover: 200 16% 11%;
-    --popover-foreground: 0 0% 95%;
-
-    --primary: 185 60% 42%;
-    --primary-foreground: 200 20% 8%;
-
-    --secondary: 200 14% 16%;
-    --secondary-foreground: 0 0% 92%;
-
-    --muted: 200 12% 16%;
-    --muted-foreground: 210 12% 65%;
-
-    --accent: 185 40% 18%;
-    --accent-foreground: 185 50% 80%;
-
-    --destructive: 0 62% 50%;
+    --secondary: 200 14% 15%;
+    --secondary-foreground: 0 0% 91%;
+    --muted: 200 12% 15%;
+    --muted-foreground: 210 11% 63%;
+    --accent: 185 38% 17%;
+    --accent-foreground: 185 48% 78%;
+    --destructive: 0 60% 50%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 200 12% 20%;
-    --input: 200 12% 22%;
-    --ring: 185 60% 50%;
+    --border: 200 12% 19%;
+    --input: 200 12% 21%;
+    --ring: 185 58% 50%;
 
-    --sidebar: 200 18% 10%;
-    --sidebar-foreground: 0 0% 90%;
-    --sidebar-accent: 185 40% 18%;
-    --sidebar-accent-foreground: 185 50% 80%;
-    --sidebar-border: 200 12% 20%;
-    --sidebar-ring: 185 60% 50%;
+    --sidebar: 200 20% 9%;
+    --sidebar-foreground: 0 0% 89%;
+    --sidebar-accent: 185 38% 17%;
+    --sidebar-accent-foreground: 185 48% 78%;
+    --sidebar-border: 200 12% 19%;
+    --sidebar-ring: 185 58% 50%;
+
+    --grad-from: hsl(185 58% 50%);
+    --grad-to: #2dd4bf;
   }
 }
 
+/* ── Base resets ──────────────────────────────────────────────────── */
 @layer base {
   * {
     @apply border-border;
   }
   html {
     -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
   }
   body {
     @apply bg-background text-foreground font-bengali antialiased;
-    /* Smooth theme transitions. */
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: background-color 0.35s ease, color 0.35s ease;
+  }
+
+  /* Ambient glow layer — dark mode only */
+  .dark body::before {
+    content: '';
+    position: fixed;
+    top: -20%;
+    right: -10%;
+    width: 60vw;
+    height: 60vw;
+    border-radius: 9999px;
+    background: radial-gradient(
+      circle,
+      hsl(185 65% 32% / 0.12) 0%,
+      transparent 65%
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Grain texture overlay — adds perceived depth */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9998;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: 0.022;
   }
 }
 
-/* Animated GPS user marker used by the MapLibre LocationMap. */
+/* ── Keyframes ────────────────────────────────────────────────────── */
+@keyframes fp-ping {
+  0% { transform: scale(0.6); opacity: 0.8; }
+  75%, 100% { transform: scale(2.4); opacity: 0; }
+}
+
+@keyframes fp-shimmer {
+  0% { transform: translateX(-100%) skewX(-12deg); }
+  100% { transform: translateX(200%) skewX(-12deg); }
+}
+
+@keyframes fp-float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes fp-glow-pulse {
+  0%, 100% { box-shadow: 0 0 8px 2px hsl(185 65% 40% / 0.25); }
+  50%       { box-shadow: 0 0 24px 6px hsl(185 65% 40% / 0.5); }
+}
+
+@keyframes fp-scan {
+  0%   { transform: translateY(-100%); opacity: 0; }
+  20%  { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { transform: translateY(100%); opacity: 0; }
+}
+
+@keyframes fp-count-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Utility classes ─────────────────────────────────────────────── */
+@layer utilities {
+  /* Gradient text — teal → emerald */
+  .fp-gradient {
+    background: linear-gradient(135deg, var(--grad-from) 0%, var(--grad-to) 55%, #34d399 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  /* Subtle gradient text (lighter — for sub-headings) */
+  .fp-gradient-soft {
+    background: linear-gradient(120deg, var(--grad-from) 0%, var(--grad-to) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  /* Section label chip — UPPERCASE tracking */
+  .fp-label {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-primary/25 bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-primary;
+  }
+
+  /* Glass surface */
+  .fp-glass {
+    @apply border border-white/15 bg-white/6 backdrop-blur-xl;
+  }
+
+  /* Glow ring animation */
+  .fp-glow-ring {
+    animation: fp-glow-pulse 2.4s ease-in-out infinite;
+  }
+
+  /* Float animation */
+  .fp-float {
+    animation: fp-float 4s ease-in-out infinite;
+  }
+
+  /* Shimmer sweep */
+  .fp-shimmer {
+    position: relative;
+    overflow: hidden;
+  }
+  .fp-shimmer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255,255,255,0.14) 50%,
+      transparent 100%
+    );
+    animation: fp-shimmer 2.2s ease-in-out infinite;
+  }
+
+  /* Scan-line effect for LIVE badge */
+  .fp-scan::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 40%;
+    background: linear-gradient(transparent, rgba(255,255,255,0.15), transparent);
+    animation: fp-scan 2.5s ease-in-out infinite;
+    pointer-events: none;
+  }
+}
+
+/* ── GPS marker ───────────────────────────────────────────────────── */
 .fp-user-marker {
   position: relative;
   width: 22px;
@@ -121,22 +259,8 @@
   border: 2px solid #ffffff;
   box-shadow: 0 0 10px 2px rgba(95, 224, 230, 0.7);
 }
-@keyframes fp-ping {
-  0% {
-    transform: scale(0.6);
-    opacity: 0.8;
-  }
-  75%,
-  100% {
-    transform: scale(2.4);
-    opacity: 0;
-  }
-}
 
-/* Thin scrollbar for the register page scroll area. */
-.fp-scroll::-webkit-scrollbar {
-  width: 6px;
-}
-.fp-scroll::-webkit-scrollbar-thumb {
-  @apply bg-primary/40 rounded-full;
-}
+/* ── Scrollbar ────────────────────────────────────────────────────── */
+.fp-scroll::-webkit-scrollbar { width: 5px; }
+.fp-scroll::-webkit-scrollbar-track { @apply bg-transparent; }
+.fp-scroll::-webkit-scrollbar-thumb { @apply bg-primary/30 rounded-full; }

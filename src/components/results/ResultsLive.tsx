@@ -1,6 +1,7 @@
 "use client";
 
-import { Trophy } from "lucide-react";
+import { motion } from "framer-motion";
+import { Trophy, Zap } from "lucide-react";
 import { Card, CardBody } from "@/components/ui/card";
 import { Avatar, CandidatePhoto } from "@/components/ui/avatar";
 import { Reveal } from "@/components/motion/primitives";
@@ -11,12 +12,24 @@ import { getCandidates, getElection, getTallies } from "@/lib/data";
 import { useStoreSync } from "@/lib/hooks";
 import { bn } from "@/i18n/bn";
 import { firstName, toBn } from "@/lib/utils";
+import { cn } from "@/lib/utils";
+
+const podiumColors = [
+  // 2nd — silver
+  "from-slate-300/30 to-slate-400/20 border-slate-300/40",
+  // 1st — gold
+  "from-yellow-400/30 to-amber-400/20 border-yellow-400/50",
+  // 3rd — bronze
+  "from-amber-600/25 to-amber-700/15 border-amber-600/35",
+];
+const podiumHeights = ["h-20", "h-32", "h-14"];
+const rankLabels    = ["", "🥇", "🥈", "🥉"];
 
 export function ResultsLive({ electionId }: { electionId: string }) {
   useStoreSync();
-  const election = getElection(electionId);
+  const election  = getElection(electionId);
   const candidates = getCandidates(electionId);
-  const tallies = getTallies(electionId);
+  const tallies    = getTallies(electionId);
 
   if (!election) {
     return <p className="text-muted-foreground">{bn.common.empty}</p>;
@@ -24,7 +37,6 @@ export function ResultsLive({ electionId }: { electionId: string }) {
 
   const totalVotes = tallies.reduce((s, t) => s + t.count, 0);
 
-  // Rank candidates by votes; build the top-3 for the podium.
   const ranked = candidates
     .map((c) => ({
       candidate: c,
@@ -33,48 +45,52 @@ export function ResultsLive({ electionId }: { electionId: string }) {
     .sort((a, b) => b.count - a.count);
 
   const top3 = ranked.slice(0, 3);
-  // Podium display order: 2nd, 1st, 3rd.
+  // Podium visual order: 2nd, 1st, 3rd
   const podiumOrder = [top3[1], top3[0], top3[2]].filter(Boolean);
-  const heights = ["h-20", "h-28", "h-14"];
 
   return (
     <div className="space-y-6">
+      {/* ── Header ────────────────────────────────────────────────── */}
       <Reveal>
-        <div className="flex items-center justify-between">
+        <div className="flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold">{election.title}</h1>
-            <p className="text-sm text-muted-foreground">
-              {bn.results.totalVotes}: {toBn(totalVotes)} {bn.results.votes}
+            <h1 className="text-display-xs font-bold tracking-tight">{election.title}</h1>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {bn.results.totalVotes}:{" "}
+              <span className="fp-gradient-soft font-semibold">{toBn(totalVotes)}</span>{" "}
+              {bn.results.votes}
             </p>
           </div>
-          <span className="flex items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
-            <span className="h-2 w-2 animate-pulse rounded-full bg-primary" />
+          <span className="fp-scan relative inline-flex shrink-0 items-center gap-1.5 overflow-hidden rounded-full border border-emerald-400/40 bg-emerald-400/10 px-3 py-1 text-xs font-semibold text-emerald-500">
+            <Zap className="h-3 w-3" />
             {bn.results.live}
           </span>
         </div>
       </Reveal>
 
-      {/* Top 3 carousel */}
+      {/* ── Top-3 carousel ────────────────────────────────────────── */}
       <Reveal>
-        <h2 className="mb-2 flex items-center gap-2 text-sm font-semibold text-muted-foreground">
+        <div className="mb-2 flex items-center gap-2">
           <Trophy className="h-4 w-4 text-primary" />
-          {bn.results.top3}
-        </h2>
+          <h2 className="text-sm font-semibold tracking-tight">{bn.results.top3}</h2>
+        </div>
         <MotionCarousel
           slides={top3}
           autoPlay={false}
           dotLabels={top3.map((t) => firstName(t.candidate.name))}
           renderSlide={(t, i) => (
-            <div className="relative">
+            <div className="group relative">
               <CandidatePhoto
                 name={t.candidate.name}
                 photoUrl={t.candidate.photoUrl}
-                className="h-52 w-full"
+                className="h-56 w-full"
               />
-              <span className="absolute left-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground shadow">
-                {toBn(i + 1)}
+              {/* Rank badge */}
+              <span className="absolute left-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-black/50 text-lg backdrop-blur-sm">
+                {rankLabels[i + 1]}
               </span>
-              <div className="absolute bottom-3 right-3 rounded-full bg-black/60 px-2.5 py-1 text-sm font-semibold text-white">
+              {/* Vote count */}
+              <div className="absolute bottom-3 right-3 rounded-xl bg-black/60 px-3 py-1 text-sm font-bold text-white backdrop-blur-sm">
                 {toBn(t.count)} {bn.results.votes}
               </div>
             </div>
@@ -82,25 +98,54 @@ export function ResultsLive({ electionId }: { electionId: string }) {
         />
       </Reveal>
 
-      {/* Podium */}
+      {/* ── Premium podium ────────────────────────────────────────── */}
       <Reveal>
-        <Card>
+        <Card variant="raised">
           <CardBody>
+            <h3 className="mb-4 text-sm font-semibold tracking-tight text-muted-foreground">
+              শীর্ষস্থান
+            </h3>
             <div className="flex items-end justify-center gap-3">
-              {podiumOrder.map((t, idx) => {
-                const realRank = top3.indexOf(t) + 1;
+              {podiumOrder.map((t, podiumIdx) => {
+                const realRank  = top3.indexOf(t) + 1 as 1 | 2 | 3;
+                const isWinner  = realRank === 1;
+
                 return (
-                  <div key={t.candidate.id} className="flex flex-1 flex-col items-center gap-2">
-                    <Avatar name={t.candidate.name} photoUrl={t.candidate.photoUrl} size="md" />
-                    <p className="max-w-full truncate text-center text-xs font-medium">
+                  <motion.div
+                    key={t.candidate.id}
+                    className="flex flex-1 flex-col items-center gap-2"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: podiumIdx * 0.12, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    <Avatar
+                      name={t.candidate.name}
+                      photoUrl={t.candidate.photoUrl}
+                      size={isWinner ? "lg" : "md"}
+                      rank={realRank}
+                    />
+                    <p
+                      className={cn(
+                        "max-w-full truncate text-center text-xs font-semibold",
+                        isWinner ? "fp-gradient text-sm" : "",
+                      )}
+                    >
                       {firstName(t.candidate.name)}
                     </p>
+                    <p className="text-xs tabular-nums text-muted-foreground">
+                      {toBn(t.count)} {bn.results.votes}
+                    </p>
+                    {/* Podium step */}
                     <div
-                      className={`flex w-full ${heights[idx]} items-start justify-center rounded-t-lg bg-gradient-to-t from-primary/30 to-primary/70 pt-1 text-sm font-bold text-primary-foreground`}
+                      className={cn(
+                        "flex w-full items-start justify-center rounded-t-xl border border-b-0 pt-2 text-base font-black",
+                        podiumHeights[podiumIdx],
+                        `bg-gradient-to-t ${podiumColors[podiumIdx]}`,
+                      )}
                     >
-                      {toBn(realRank)}
+                      {rankLabels[realRank]}
                     </div>
-                  </div>
+                  </motion.div>
                 );
               })}
             </div>
@@ -108,12 +153,14 @@ export function ResultsLive({ electionId }: { electionId: string }) {
         </Card>
       </Reveal>
 
-      {/* Full results */}
+      {/* ── Full leaderboard + chart ───────────────────────────────── */}
       <Reveal>
-        <Card>
-          <CardBody className="space-y-5">
+        <Card variant="raised">
+          <CardBody className="space-y-6">
             <ResultsChart candidates={candidates} tallies={tallies} />
-            <RankingGraph candidates={candidates} tallies={tallies} />
+            <div className="border-t border-border/40 pt-4">
+              <RankingGraph candidates={candidates} tallies={tallies} />
+            </div>
           </CardBody>
         </Card>
       </Reveal>

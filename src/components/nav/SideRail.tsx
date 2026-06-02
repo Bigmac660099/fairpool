@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { LogOut, PanelLeftClose, PanelLeft, ChevronUp } from "lucide-react";
+import { motion } from "framer-motion";
 import { cn, firstName } from "@/lib/utils";
 import { bn } from "@/i18n/bn";
 import { logout } from "@/lib/data";
@@ -19,17 +20,12 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 
-/**
- * Desktop sidebar (hidden on mobile). Collapsible to icon mode with Ctrl+B.
- * The account menu uses onClick + router.push (not <Link>) so navigation is
- * not swallowed when the menu unmounts.
- */
 export function SideRail() {
   const { user } = useAuth();
-  const router = useRouter();
+  const router   = useRouter();
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [menuOpen, setMenuOpen]   = useState(false);
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -44,77 +40,85 @@ export function SideRail() {
 
   const items = navItems(user?.role);
 
-  function go(href: string) {
-    setMenuOpen(false);
-    router.push(href);
-  }
-
-  function doLogout() {
-    setMenuOpen(false);
-    logout();
-    router.push("/login");
-  }
+  function go(href: string) { setMenuOpen(false); router.push(href); }
+  function doLogout() { setMenuOpen(false); logout(); router.push("/login"); }
 
   return (
     <aside
       className={cn(
-        "sticky top-0 hidden h-screen shrink-0 flex-col border-r border-sidebar-border bg-sidebar text-sidebar-foreground transition-[width] duration-300 md:flex",
+        "sticky top-0 hidden h-screen shrink-0 flex-col border-r border-sidebar-border bg-sidebar transition-[width] duration-300 md:flex",
         collapsed ? "w-[72px]" : "w-64",
       )}
     >
-      {/* Header / logo */}
-      <div className="flex h-16 items-center gap-2 px-4">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary font-bold text-primary-foreground">
-          F
+      {/* ── Wordmark / logo ─────────────────────────────────────── */}
+      <div className="flex h-16 items-center gap-3 px-4">
+        <div className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-teal-400 font-black text-white shadow-glow-sm">
+          FP
+          {/* Subtle inner highlight */}
+          <div className="pointer-events-none absolute inset-0 rounded-xl bg-gradient-to-t from-transparent to-white/15" />
         </div>
         {!collapsed && (
-          <span className="text-lg font-bold tracking-tight">{bn.app.name}</span>
+          <span className="fp-gradient text-lg font-black tracking-tighter">
+            ফেয়ারপুল
+          </span>
         )}
         <button
           type="button"
           onClick={() => setCollapsed((c) => !c)}
-          className="ml-auto rounded-md p-1.5 text-muted-foreground hover:bg-sidebar-accent"
+          className="ml-auto rounded-lg p-1.5 text-muted-foreground transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
           aria-label="সাইডবার টগল"
         >
-          {collapsed ? (
-            <PanelLeft className="h-5 w-5" />
-          ) : (
-            <PanelLeftClose className="h-5 w-5" />
-          )}
+          {collapsed ? <PanelLeft className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
         </button>
       </div>
 
-      {/* Nav */}
-      <nav className="flex-1 space-y-1 px-3 py-2">
+      {/* ── Nav items ───────────────────────────────────────────── */}
+      <nav className="flex-1 space-y-0.5 px-3 py-2">
         {items.map((item) => {
-          const active =
-            pathname === item.href || pathname.startsWith(item.href + "/");
+          const active = pathname === item.href || pathname.startsWith(item.href + "/");
           return (
             <Link
               key={item.href}
               href={item.href}
               className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                "group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200",
                 active
-                  ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                  : "text-sidebar-foreground/70 hover:bg-sidebar-accent/60",
+                  ? "bg-primary/10 text-primary"
+                  : "text-sidebar-foreground/65 hover:bg-sidebar-accent/60 hover:text-sidebar-foreground",
               )}
             >
-              <item.icon className="h-5 w-5 shrink-0" />
+              {/* Active left accent bar */}
+              {active && (
+                <motion.div
+                  layoutId="sidebar-active"
+                  className="absolute left-0 top-1/2 h-5 w-0.5 -translate-y-1/2 rounded-full bg-primary"
+                  transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                />
+              )}
+              <item.icon
+                className={cn(
+                  "h-5 w-5 shrink-0 transition-transform duration-200",
+                  active ? "text-primary" : "group-hover:scale-110",
+                )}
+              />
               {!collapsed && <span>{item.label}</span>}
+              {/* Active dot when collapsed */}
+              {collapsed && active && (
+                <span className="absolute right-1 top-1 h-1.5 w-1.5 rounded-full bg-primary" />
+              )}
             </Link>
           );
         })}
       </nav>
 
-      {/* Footer: theme toggle + Radix account dropdown */}
+      {/* ── Footer: theme + account menu ────────────────────────── */}
       <div className="border-t border-sidebar-border p-3">
         <div className="flex items-center gap-2">
           <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
             <DropdownMenuTrigger asChild>
               <button
                 type="button"
-                className="flex flex-1 items-center gap-2 rounded-lg p-1.5 text-left outline-none hover:bg-sidebar-accent"
+                className="flex flex-1 items-center gap-2.5 rounded-xl p-1.5 text-left outline-none transition-colors hover:bg-sidebar-accent"
               >
                 <Avatar name={user?.name ?? "?"} size="sm" />
                 {!collapsed && (
@@ -126,8 +130,6 @@ export function SideRail() {
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent side="top" align="start" className="w-52">
-              {/* onClick + router.push (NOT asChild + Link) so the portal
-                  closing does not swallow navigation. */}
               <DropdownMenuItem onClick={() => go("/profile")}>
                 {bn.nav.profile}
               </DropdownMenuItem>

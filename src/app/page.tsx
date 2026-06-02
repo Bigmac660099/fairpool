@@ -1,6 +1,15 @@
-import { redirect } from "next/navigation";
+import { LandingPage } from "@/components/marketing/LandingPage";
+import { SiteFooter } from "@/components/SiteFooter";
 
-/** Entry point — route guards on /dashboard handle auth redirects. */
+/**
+ * Public-facing landing page (unauthenticated). Authenticated users reach
+ * their dashboard via /dashboard which is guarded in the (app) layout.
+ */
 export default function Home() {
-  redirect("/dashboard");
+  return (
+    <>
+      <LandingPage />
+      <SiteFooter />
+    </>
+  );
 }
