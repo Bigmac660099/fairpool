@@ -51,7 +51,7 @@ export function SideRail() {
           FP
         </div>
         {!collapsed && (
-          <span className="text-base font-bold tracking-tight text-sidebar-foreground">
+          <span className="font-accent text-lg font-bold tracking-tight text-sidebar-foreground">
             {bn.app.name}
           </span>
         )}

@@ -61,6 +61,7 @@ export interface Department {
   id: string;
   name: string; // Bengali department name
   code: string;
+  maxSemester: number; // highest semester offered (used to cap registration)
 }
 
 export type ElectionStatus = "draft" | "active" | "closed";

@@ -10,17 +10,19 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        bengali: ["var(--font-bengali)", "system-ui", "sans-serif"],
+        bengali: ["var(--font-bengali)", "var(--font-noto-bengali)", "system-ui", "sans-serif"],
+        display: ["var(--font-display)", "var(--font-bengali)", "system-ui", "sans-serif"],
+        accent:  ["var(--font-accent)", "var(--font-bengali)", "system-ui", "sans-serif"],
       },
 
-      /* Display type scale */
+      /* Display type scale — Bengali-safe line-heights (matras need room) */
       fontSize: {
-        "display-2xl": ["4rem",   { lineHeight: "1.1",  letterSpacing: "-0.02em" }],
-        "display-xl":  ["3.25rem",{ lineHeight: "1.12", letterSpacing: "-0.018em" }],
-        "display-lg":  ["2.75rem",{ lineHeight: "1.15", letterSpacing: "-0.015em" }],
-        "display-md":  ["2.25rem",{ lineHeight: "1.2",  letterSpacing: "-0.012em" }],
-        "display-sm":  ["1.875rem",{ lineHeight: "1.25",letterSpacing: "-0.01em" }],
-        "display-xs":  ["1.5rem", { lineHeight: "1.3",  letterSpacing: "-0.008em" }],
+        "display-2xl": ["3.75rem", { lineHeight: "1.3",  letterSpacing: "-0.01em" }],
+        "display-xl":  ["3rem",    { lineHeight: "1.32", letterSpacing: "-0.008em" }],
+        "display-lg":  ["2.5rem",  { lineHeight: "1.32", letterSpacing: "-0.006em" }],
+        "display-md":  ["2rem",    { lineHeight: "1.35", letterSpacing: "-0.004em" }],
+        "display-sm":  ["1.75rem", { lineHeight: "1.4",  letterSpacing: "0" }],
+        "display-xs":  ["1.4rem",  { lineHeight: "1.4",  letterSpacing: "0" }],
       },
 
       colors: {

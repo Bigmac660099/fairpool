@@ -49,10 +49,10 @@ function nowPlusHours(h: number): string {
 
 function seed(): DB {
   const departments: Department[] = [
-    { id: "dept-cse", name: "কম্পিউটার বিজ্ঞান ও প্রকৌশল", code: "CSE" },
-    { id: "dept-eee", name: "তড়িৎ ও ইলেকট্রনিক প্রকৌশল", code: "EEE" },
-    { id: "dept-bba", name: "ব্যবসায় প্রশাসন", code: "BBA" },
-    { id: "dept-eng", name: "ইংরেজি", code: "ENG" },
+    { id: "dept-cse", name: "কম্পিউটার বিজ্ঞান ও প্রকৌশল", code: "CSE", maxSemester: 8 },
+    { id: "dept-eee", name: "তড়িৎ ও ইলেকট্রনিক প্রকৌশল", code: "EEE", maxSemester: 8 },
+    { id: "dept-bba", name: "ব্যবসায় প্রশাসন", code: "BBA", maxSemester: 8 },
+    { id: "dept-eng", name: "ইংরেজি", code: "ENG", maxSemester: 8 },
   ];
 
   const elections: Election[] = [

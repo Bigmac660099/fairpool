@@ -225,10 +225,16 @@ function RegisterForm() {
     };
   }, [form.password, form.confirm]);
 
+  const selectedDept = departments.find((d) => d.id === form.departmentId);
+  const maxSem = selectedDept?.maxSemester ?? 12;
+
   function submit() {
     if (!form.name.trim())                  return setError("নাম দিন");
     if (!/^\d{14}$/.test(form.studentId))   return setError(bn.auth.invalidId);
     if (form.email && !isMainstreamEmail(form.email)) return setError(bn.auth.disposableEmail);
+    const sem = Number(form.semester);
+    if (!sem || sem < 1 || sem > maxSem)
+      return setError(`সেমিস্টার ১ থেকে ${maxSem}-এর মধ্যে হতে হবে`);
     if (!fullyMatched)                      return setError(bn.auth.passwordMismatch);
     if (!accepted)                          return setError("শর্তাবলী মেনে নিন");
     setLoading(true);
@@ -285,7 +291,7 @@ function RegisterForm() {
           </select>
         </div>
         <div>
-          <label className={labelCls}>{bn.auth.semester}</label>
+          <label className={labelCls}>{bn.auth.semester} <span className="text-white/30">(১–{maxSem})</span></label>
           <input value={form.semester}
             onChange={(e) => set("semester", e.target.value.replace(/\D/g, "").slice(0, 2))}
             inputMode="numeric" placeholder="১" className={inputCls} />

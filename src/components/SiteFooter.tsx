@@ -13,7 +13,7 @@ export function SiteFooter() {
   const { brandName, logoUrl, footer } = getSettings();
 
   return (
-    <footer className="mt-16 bg-[#08112A] text-white">
+    <footer className="mt-16 bg-neutral-900 text-white dark:bg-[#08112A]">
       {/* Top accent line */}
       <div className="h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
 
@@ -66,7 +66,7 @@ export function SiteFooter() {
                 FP
               </span>
             )}
-            <span className="text-base font-bold tracking-tight text-white">{brandName}</span>
+            <span className="font-accent text-lg font-bold tracking-tight text-white">{brandName}</span>
           </div>
           <p className="mb-5 max-w-xs text-sm leading-relaxed text-white/65">
             {footer.description}

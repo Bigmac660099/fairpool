@@ -13,6 +13,7 @@ import {
 import { useStoreSync } from "@/lib/hooks";
 import type { Department } from "@/lib/types";
 import { bn } from "@/i18n/bn";
+import { toBn } from "@/lib/utils";
 
 export function DepartmentsClient() {
   useStoreSync();
@@ -21,7 +22,10 @@ export function DepartmentsClient() {
 
   function save() {
     if (!editing || !editing.name.trim() || !editing.code.trim()) return;
-    upsertDepartment(editing);
+    upsertDepartment({
+      ...editing,
+      maxSemester: Math.min(16, Math.max(1, editing.maxSemester || 8)),
+    });
     setEditing(null);
   }
 
@@ -30,7 +34,7 @@ export function DepartmentsClient() {
       <div className="flex justify-end">
         <Button
           onClick={() =>
-            setEditing({ id: `dept-${Date.now()}`, name: "", code: "" })
+            setEditing({ id: `dept-${Date.now()}`, name: "", code: "", maxSemester: 8 })
           }
         >
           <Plus className="h-4 w-4" />
@@ -47,14 +51,27 @@ export function DepartmentsClient() {
                 onChange={(e) => setEditing({ ...editing, name: e.target.value })}
               />
             </Field>
-            <Field label="কোড">
-              <Input
-                value={editing.code}
-                onChange={(e) =>
-                  setEditing({ ...editing, code: e.target.value.toUpperCase() })
-                }
-              />
-            </Field>
+            <div className="grid grid-cols-2 gap-4">
+              <Field label="কোড">
+                <Input
+                  value={editing.code}
+                  onChange={(e) =>
+                    setEditing({ ...editing, code: e.target.value.toUpperCase() })
+                  }
+                />
+              </Field>
+              <Field label="সর্বোচ্চ সেমিস্টার" hint="১–১৬">
+                <Input
+                  type="number"
+                  min={1}
+                  max={16}
+                  value={editing.maxSemester}
+                  onChange={(e) =>
+                    setEditing({ ...editing, maxSemester: Number(e.target.value) })
+                  }
+                />
+              </Field>
+            </div>
             <div className="flex gap-3">
               <Button variant="outline" className="flex-1" onClick={() => setEditing(null)}>
                 {bn.admin.cancel}
@@ -73,7 +90,12 @@ export function DepartmentsClient() {
             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-sm font-bold text-primary">
               {d.code}
             </span>
-            <p className="min-w-0 flex-1 truncate font-medium">{d.name}</p>
+            <div className="min-w-0 flex-1">
+              <p className="truncate font-medium">{d.name}</p>
+              <p className="text-xs text-muted-foreground">
+                সর্বোচ্চ সেমিস্টার: {toBn(d.maxSemester ?? 8)}
+              </p>
+            </div>
             <button onClick={() => setEditing(d)} aria-label={bn.admin.edit}>
               <Pencil className="h-4 w-4 text-muted-foreground hover:text-primary" />
             </button>

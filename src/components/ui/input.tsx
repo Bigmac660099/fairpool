@@ -62,9 +62,12 @@ export const GhostInput = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLI
     <input
       ref={ref}
       className={cn(
-        "h-11 w-full rounded-lg border border-white/15 bg-white/8 px-4 text-sm text-white",
-        "placeholder:text-white/40 outline-none transition-colors",
-        "focus:border-white/35 focus:bg-white/12 focus:ring-2 focus:ring-white/10",
+        /* fp-auth-input class targets the autofill override in globals.css */
+        "fp-auth-input",
+        "h-11 w-full rounded-lg border border-white/20 bg-white/10 px-4 text-sm text-white",
+        "placeholder:text-white/45 outline-none transition-colors",
+        "focus:border-white/40 focus:bg-white/14 focus:ring-2 focus:ring-white/15",
+        "caret-white",
         className,
       )}
       {...props}

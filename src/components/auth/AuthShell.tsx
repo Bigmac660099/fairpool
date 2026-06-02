@@ -24,7 +24,9 @@ export function AuthShell({ initialTab }: { initialTab: "login" | "register" }) 
       : { color1: "#06B6D4", color2: "#061625" };   /* brighter cyan, deeper navy */
 
   return (
-    <main className="relative flex min-h-screen items-center justify-center overflow-y-auto px-4 py-10">
+    /* bg-[#08112A] is the fallback before the WebGL shader loads — ensures
+       GhostInput white text is always visible even without R3F.           */
+    <main className="relative flex min-h-screen items-center justify-center overflow-y-auto bg-[#08112A] px-4 py-10">
       <HeroGeometric color1={palette.color1} color2={palette.color2} />
       <AuthModal tab={tab} onTabChange={setTab} />
     </main>

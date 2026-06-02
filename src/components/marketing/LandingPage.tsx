@@ -90,7 +90,7 @@ function LandingNav() {
           <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-xs font-black text-primary-foreground">
             FP
           </span>
-          <span className={`text-base font-bold tracking-tight ${scrolled ? "text-foreground" : "text-white"}`}>
+          <span className={`font-accent text-lg font-bold tracking-tight ${scrolled ? "text-foreground" : "text-white"}`}>
             {bn.app.name}
           </span>
         </Link>
@@ -160,16 +160,30 @@ export function LandingPage() {
             বাংলাদেশের প্রথম GPS-যাচাইকৃত ভোটিং প্ল্যাটফর্ম
           </motion.div>
 
-          {/* Headline */}
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            className="text-display-xl font-black leading-tight tracking-tightest md:text-display-2xl"
-          >
-            <span className="block text-white">স্বচ্ছ নির্বাচন,</span>
-            <span className="fp-gradient block">নিরাপদ ভবিষ্যৎ</span>
-          </motion.h1>
+          {/* Headline — tear-reveal, line by line. Generous leading so the
+              two Bengali lines never overlap on desktop. */}
+          <h1 className="text-display-xl font-display font-bold md:text-display-2xl">
+            <span className="block overflow-hidden pb-[0.12em]">
+              <motion.span
+                className="block text-white"
+                initial={{ y: "108%" }}
+                animate={{ y: "0%" }}
+                transition={{ delay: 0.15, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+              >
+                স্বচ্ছ নির্বাচন,
+              </motion.span>
+            </span>
+            <span className="block overflow-hidden pb-[0.12em]">
+              <motion.span
+                className="fp-gradient block"
+                initial={{ y: "108%" }}
+                animate={{ y: "0%" }}
+                transition={{ delay: 0.32, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+              >
+                নিরাপদ ভবিষ্যৎ
+              </motion.span>
+            </span>
+          </h1>
 
           {/* Subheading */}
           <motion.p
@@ -264,16 +278,18 @@ export function LandingPage() {
               <Star className="h-3 w-3" />
               বৈশিষ্ট্য
             </motion.span>
-            <motion.h2
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-              className="mt-4 text-display-md font-black tracking-tight"
-            >
-              একটি সম্পূর্ণ{" "}
-              <span className="fp-gradient">ভোটিং সমাধান</span>
-            </motion.h2>
+            <div className="mt-4 overflow-hidden pb-[0.12em]">
+              <motion.h2
+                initial={{ y: "110%" }}
+                whileInView={{ y: "0%" }}
+                viewport={{ once: true, amount: 0.6 }}
+                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                className="text-display-md font-bold tracking-tight"
+              >
+                একটি সম্পূর্ণ{" "}
+                <span className="fp-gradient">ভোটিং সমাধান</span>
+              </motion.h2>
+            </div>
             <motion.p
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
@@ -319,15 +335,18 @@ export function LandingPage() {
               <Lock className="h-3 w-3" />
               নিরাপত্তা
             </span>
-            <motion.h2
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="mt-4 text-display-md font-black tracking-tight"
-            >
-              এন্টারপ্রাইজ-মানের{" "}
-              <span className="fp-gradient">সুরক্ষা</span>
-            </motion.h2>
+            <div className="mt-4 overflow-hidden pb-[0.12em]">
+              <motion.h2
+                initial={{ y: "110%" }}
+                whileInView={{ y: "0%" }}
+                viewport={{ once: true, amount: 0.6 }}
+                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                className="text-display-md font-bold tracking-tight"
+              >
+                এন্টারপ্রাইজ-মানের{" "}
+                <span className="fp-gradient">সুরক্ষা</span>
+              </motion.h2>
+            </div>
           </div>
 
           <div className="grid gap-8 md:grid-cols-3">
@@ -367,14 +386,17 @@ export function LandingPage() {
               <CheckCircle2 className="h-3 w-3" />
               প্রক্রিয়া
             </span>
-            <motion.h2
-              initial={{ opacity: 0, y: 16 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="mt-4 text-display-md font-black tracking-tight"
-            >
-              ৪ ধাপে ভোট দিন
-            </motion.h2>
+            <div className="mt-4 overflow-hidden pb-[0.12em]">
+              <motion.h2
+                initial={{ y: "110%" }}
+                whileInView={{ y: "0%" }}
+                viewport={{ once: true, amount: 0.6 }}
+                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                className="text-display-md font-bold tracking-tight"
+              >
+                ৪ ধাপে ভোট দিন
+              </motion.h2>
+            </div>
           </div>
 
           <div className="relative grid gap-6 md:grid-cols-4">
@@ -425,16 +447,19 @@ export function LandingPage() {
         </div>
 
         <div className="relative z-10 mx-auto max-w-2xl text-center">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-display-md font-black tracking-tight"
-          >
-            আজই{" "}
-            <span className="fp-gradient">ফেয়ারপুল</span>
-            -এ যোগ দিন
-          </motion.h2>
+          <div className="overflow-hidden pb-[0.12em]">
+            <motion.h2
+              initial={{ y: "110%" }}
+              whileInView={{ y: "0%" }}
+              viewport={{ once: true, amount: 0.6 }}
+              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+              className="text-display-md font-bold tracking-tight"
+            >
+              আজই{" "}
+              <span className="fp-gradient">ফেয়ারপুল</span>
+              -এ যোগ দিন
+            </motion.h2>
+          </div>
           <motion.p
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
