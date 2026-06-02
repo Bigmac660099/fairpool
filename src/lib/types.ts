@@ -41,6 +41,8 @@ export interface SiteSettings {
   logoUrl: string | null;
   faviconUrl: string | null;
   heroBannerUrl: string | null;
+  /** List of trusted partner universities shown on the public landing page. */
+  trustedUniversities: string[];
   footer: {
     description: string;
     address: string;

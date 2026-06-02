@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardBody } from "@/components/ui/card";
 import { toBn } from "@/lib/utils";
 import { bn } from "@/i18n/bn";
+import { getSettings } from "@/lib/data";
 
 const HeroGeometric = dynamic(
   () => import("@/components/ui/hero-geometric").then((m) => m.HeroGeometric),
@@ -217,13 +218,13 @@ export function LandingPage() {
           </motion.p>
         </div>
 
-        {/* Scroll indicator */}
+        {/* Scroll indicator — desktop only, hidden on mobile */}
         <motion.div
-          className="absolute bottom-8 left-1/2 -translate-x-1/2"
+          className="absolute bottom-8 left-1/2 hidden -translate-x-1/2 md:flex"
           animate={{ y: [0, 8, 0] }}
           transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
         >
-          <div className="h-10 w-6 rounded-full border-2 border-white/30 flex items-start justify-center pt-1.5">
+          <div className="flex h-10 w-6 items-start justify-center rounded-full border-2 border-white/30 pt-1.5">
             <div className="h-2 w-1 rounded-full bg-white/50" />
           </div>
         </motion.div>
@@ -244,7 +245,7 @@ export function LandingPage() {
               <div className="fp-gradient text-display-md font-black tabular-nums">
                 <CountUp to={s.value} suffix={s.suffix} />
               </div>
-              <p className="mt-1 text-sm font-medium text-muted-foreground">{s.label}</p>
+              <p className="mt-1 text-sm font-medium text-foreground/60">{s.label}</p>
             </motion.div>
           ))}
         </div>
@@ -278,7 +279,7 @@ export function LandingPage() {
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
               transition={{ delay: 0.2 }}
-              className="mx-auto mt-4 max-w-xl text-muted-foreground"
+              className="mx-auto mt-4 max-w-xl text-foreground/65"
             >
               আধুনিক প্রযুক্তি ও নিরাপত্তার সমন্বয়ে তৈরি একটি বিশ্বমানের ভোটিং অভিজ্ঞতা।
             </motion.p>
@@ -300,7 +301,7 @@ export function LandingPage() {
                     </div>
                     <div>
                       <h3 className="font-semibold tracking-tight">{f.title}</h3>
-                      <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{f.desc}</p>
+                      <p className="mt-1 text-sm leading-relaxed text-foreground/65">{f.desc}</p>
                     </div>
                   </CardBody>
                 </Card>
@@ -397,7 +398,7 @@ export function LandingPage() {
                   </span>
                 </div>
                 <h3 className="mb-2 font-semibold tracking-tight">{step.title}</h3>
-                <p className="text-sm leading-relaxed text-muted-foreground">{step.desc}</p>
+                <p className="text-sm leading-relaxed text-foreground/65">{step.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -407,22 +408,10 @@ export function LandingPage() {
       {/* ══ TRUST BAND ═════════════════════════════════════════════ */}
       <section className="border-y border-border/50 py-16 px-5">
         <div className="mx-auto max-w-5xl">
-          <p className="mb-8 text-center text-sm font-medium uppercase tracking-widest text-muted-foreground">
+          <p className="mb-8 text-center text-sm font-semibold uppercase tracking-widest text-foreground/50">
             বিশ্বস্ত প্রতিষ্ঠানসমূহ
           </p>
-          <div className="flex flex-wrap items-center justify-center gap-6">
-            {["ঢাকা বিশ্ববিদ্যালয়", "BUET", "চট্টগ্রাম বিশ্ববিদ্যালয়", "রাজশাহী বিশ্ববিদ্যালয়", "NSU"].map(
-              (name) => (
-                <div
-                  key={name}
-                  className="flex items-center gap-2 rounded-xl border border-border/50 bg-muted/50 px-4 py-2.5 text-sm font-semibold text-muted-foreground"
-                >
-                  <Building2 className="h-4 w-4 text-primary" />
-                  {name}
-                </div>
-              ),
-            )}
-          </div>
+          <TrustedUniversities />
         </div>
       </section>
 
@@ -451,7 +440,7 @@ export function LandingPage() {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ delay: 0.15 }}
-            className="mt-4 text-muted-foreground"
+            className="mt-4 text-foreground/65"
           >
             স্বচ্ছ, নিরাপদ ও আধুনিক বিশ্ববিদ্যালয় নির্বাচনের জন্য এখনই নিবন্ধন করুন।
           </motion.p>
@@ -476,6 +465,25 @@ export function LandingPage() {
           </motion.div>
         </div>
       </section>
+    </div>
+  );
+}
+
+/* ─── Trusted universities (reads live from admin CMS) ──────────── */
+function TrustedUniversities() {
+  const unis = getSettings().trustedUniversities ?? [];
+  if (unis.length === 0) return null;
+  return (
+    <div className="flex flex-wrap items-center justify-center gap-3">
+      {unis.map((name) => (
+        <div
+          key={name}
+          className="flex items-center gap-2 rounded-xl border border-border bg-white px-4 py-2.5 text-sm font-semibold text-foreground shadow-card"
+        >
+          <Building2 className="h-4 w-4 text-primary" />
+          {name}
+        </div>
+      ))}
     </div>
   );
 }
@@ -506,7 +514,7 @@ function SecurityCard({
           <div className="flex items-center gap-2 text-primary">{icon}</div>
           <div>
             <h3 className="font-semibold tracking-tight">{title}</h3>
-            <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{desc}</p>
+            <p className="mt-1.5 text-sm leading-relaxed text-foreground/65">{desc}</p>
           </div>
         </CardBody>
       </Card>

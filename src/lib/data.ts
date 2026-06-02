@@ -160,6 +160,14 @@ function seed(): DB {
     logoUrl: null,
     faviconUrl: null,
     heroBannerUrl: null,
+    trustedUniversities: [
+      "ঢাকা বিশ্ববিদ্যালয়",
+      "BUET",
+      "চট্টগ্রাম বিশ্ববিদ্যালয়",
+      "রাজশাহী বিশ্ববিদ্যালয়",
+      "NSU",
+      "BRAC University",
+    ],
     footer: {
       description: "স্বচ্ছ ও নিরাপদ বিশ্ববিদ্যালয় ভোটিং প্ল্যাটফর্ম।",
       address:
@@ -563,6 +571,12 @@ export function updateSettings(patch: Partial<SiteSettings>): void {
 export function updateFooter(patch: Partial<SiteSettings["footer"]>): void {
   const db = load();
   db.settings.footer = { ...db.settings.footer, ...patch };
+  persist();
+}
+
+export function updateTrustedUniversities(list: string[]): void {
+  const db = load();
+  db.settings.trustedUniversities = list;
   persist();
 }
 
