@@ -8,7 +8,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { GhostInput } from "@/components/ui/input";
-import { getDepartments, login, register } from "@/lib/data";
+import { getDepartments, login, register, lockoutRemaining } from "@/lib/data";
 import { isClerkMode } from "@/lib/auth-mode";
 import { bn } from "@/i18n/bn";
 
@@ -110,6 +110,11 @@ function LoginForm() {
   const [loading, setLoading]       = useState(false);
 
   function submit() {
+    // Brute-force lockout check (5 failed attempts → 15 min).
+    const locked = lockoutRemaining(identifier);
+    if (locked > 0) {
+      return setError(`অনেকবার ভুল চেষ্টা — ${Math.ceil(locked / 60)} মিনিট পর আবার চেষ্টা করুন`);
+    }
     const isEmail = identifier.includes("@");
     if (!isEmail && !/^\d{14}$/.test(identifier))
       return setError(bn.auth.invalidIdentifier);
@@ -118,7 +123,13 @@ function LoginForm() {
     setLoading(true);
     const user = login(identifier, password);
     setLoading(false);
-    if (!user) return setError(bn.auth.invalidIdentifier);
+    if (!user) {
+      const stillLocked = lockoutRemaining(identifier);
+      if (stillLocked > 0) {
+        return setError(`অনেকবার ভুল চেষ্টা — ${Math.ceil(stillLocked / 60)} মিনিট পর আবার চেষ্টা করুন`);
+      }
+      return setError(bn.auth.invalidIdentifier);
+    }
     router.push(user.role === "student" ? "/dashboard" : "/admin");
   }
 

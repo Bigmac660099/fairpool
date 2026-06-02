@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Webhook } from "svix";
 import { isSupabaseConfigured, supabaseService } from "@/lib/server/supabase";
+import { encryptField } from "@/lib/server/crypto";
+import { sanitizeName } from "@/lib/sanitize";
+import { logError } from "@/lib/server/log";
 
 /**
  * Clerk webhook handler — syncs Clerk user lifecycle events to the Supabase
@@ -61,7 +64,8 @@ export async function POST(req: NextRequest) {
 
     const payload = {
       clerk_id: clerkId,
-      name,
+      // PII encrypted at rest (AES-256-GCM). No-op when ENCRYPTION_KEY unset.
+      name: encryptField(sanitizeName(name)) ?? sanitizeName(name),
       email,
       role,
       ...(studentId ? { student_id: studentId } : {}),
@@ -72,8 +76,9 @@ export async function POST(req: NextRequest) {
       .upsert(payload, { onConflict: "clerk_id" });
 
     if (error) {
-      console.error("[clerk-webhook] upsert error:", error.message);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      // Redacted log — never echo the payload (contains PII) or a stack trace.
+      logError("clerk-webhook", error, { op: "upsert", clerkId });
+      return NextResponse.json({ error: "sync failed" }, { status: 500 });
     }
   }
 
@@ -83,8 +88,8 @@ export async function POST(req: NextRequest) {
       .delete()
       .eq("clerk_id", data.id);
     if (error) {
-      console.error("[clerk-webhook] delete error:", error.message);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      logError("clerk-webhook", error, { op: "delete", clerkId: data.id });
+      return NextResponse.json({ error: "sync failed" }, { status: 500 });
     }
   }
 

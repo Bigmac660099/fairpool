@@ -8,6 +8,9 @@ import {
 } from "@/lib/schemas";
 import { isSupabaseConfigured, supabaseAnon, supabaseService } from "./supabase";
 import { SESSION_COOKIE, signSession } from "./session";
+import { encryptField } from "./crypto";
+import { logError } from "./log";
+import { sanitizeName } from "@/lib/sanitize";
 import type { CastVoteResult } from "@/lib/types";
 
 /**
@@ -19,6 +22,11 @@ import type { CastVoteResult } from "@/lib/types";
  */
 
 function setSessionCookie(token: string) {
+  // Session cookie hardening:
+  //  httpOnly  → not readable by JS, blocks token theft via XSS
+  //  secure    → only sent over HTTPS in production (no plaintext leakage)
+  //  sameSite  → "lax" blocks CSRF on unsafe methods while allowing top-level
+  //              auth redirects (Clerk/Google OAuth return)
   cookies().set(SESSION_COOKIE, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
@@ -35,12 +43,16 @@ export async function loginAction(raw: unknown) {
   const role = password === "admin" ? "admin" : "student";
   const svc = supabaseService();
   // Upsert the profile (local-style auth: any valid 14-digit id).
+  const fallbackName = `শিক্ষার্থী ${studentId.slice(-4)}`;
   const { data, error } = await svc
     .from("profiles")
-    .upsert({ student_id: studentId, name: `শিক্ষার্থী ${studentId.slice(-4)}`, role }, { onConflict: "student_id" })
+    .upsert({ student_id: studentId, name: encryptField(fallbackName) ?? fallbackName, role }, { onConflict: "student_id" })
     .select()
     .single();
-  if (error || !data) throw new Error(error?.message ?? "login failed");
+  if (error || !data) {
+    logError("loginAction", error, { studentId });
+    throw new Error("লগইন ব্যর্থ হয়েছে");
+  }
 
   const token = await signSession({ sub: data.id, role: data.role, studentId });
   setSessionCookie(token);
@@ -52,12 +64,14 @@ export async function registerAction(raw: unknown) {
   if (!isSupabaseConfigured) throw new Error("Supabase not configured");
   const role = input.password === "admin" ? "admin" : "student";
   const svc = supabaseService();
+  // Sanitize (XSS) then encrypt the name at rest (AES-256-GCM via crypto.ts).
+  const safeName = sanitizeName(input.name);
   const { data, error } = await svc
     .from("profiles")
     .upsert(
       {
-        student_id: input.studentId,
-        name: input.name,
+        student_id: input.studentId, // parameterized by the SDK — no SQLi
+        name: encryptField(safeName) ?? safeName,
         role,
         department_id: input.departmentId,
         semester: input.semester,
@@ -66,7 +80,11 @@ export async function registerAction(raw: unknown) {
     )
     .select()
     .single();
-  if (error || !data) throw new Error(error?.message ?? "register failed");
+  // Don't surface the raw DB error to the client (info leakage).
+  if (error || !data) {
+    logError("registerAction", error, { studentId: input.studentId });
+    throw new Error("নিবন্ধন ব্যর্থ হয়েছে");
+  }
   const token = await signSession({ sub: data.id, role: data.role, studentId: input.studentId });
   setSessionCookie(token);
   return { id: data.id, role: data.role as "student" | "admin" };
@@ -86,7 +104,9 @@ export async function castVoteAction(voterId: string, raw: unknown): Promise<Cas
     p_lon: lon ?? null,
   });
   if (error) {
-    return { ok: false, code: "invalid_candidate", message: error.message };
+    // Log the detail server-side; return a generic message to the client.
+    logError("castVoteAction", error, { electionId, voterId });
+    return { ok: false, code: "invalid_candidate", message: "ভোট রেকর্ড করা যায়নি" };
   }
   return data as CastVoteResult;
 }

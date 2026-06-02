@@ -25,6 +25,7 @@ import {
 import { useAuth, useStoreSync } from "@/lib/hooks";
 import { bn } from "@/i18n/bn";
 import { toBn } from "@/lib/utils";
+import { maskStudentId, maskEmail } from "@/lib/mask";
 import type { Profile } from "@/lib/types";
 
 /**
@@ -75,7 +76,9 @@ export default function AdminUsersPage() {
                     </span>
                   )}
                 </p>
-                <p className="text-sm text-muted-foreground">{toBn(p.studentId)}</p>
+                {/* PII masked in the admin list (anti shoulder-surf / screenshot leak) */}
+                <p className="text-sm tabular-nums text-muted-foreground">{toBn(maskStudentId(p.studentId))}</p>
+                <p className="truncate text-xs text-muted-foreground">{maskEmail(p.email)}</p>
               </div>
 
               <span className="rounded-full bg-secondary px-2.5 py-1 text-xs font-medium">

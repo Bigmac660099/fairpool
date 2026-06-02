@@ -13,6 +13,7 @@ import type {
   Vote,
 } from "./types";
 import { withinRadius, haversineMeters } from "./geo";
+import { sanitizeName } from "./sanitize";
 
 /**
  * FAIRPOOL local data layer.
@@ -397,12 +398,64 @@ function setSession(profile: Profile | null): void {
   emit();
 }
 
+// ── Brute-force lockout ─────────────────────────────────────────────────────
+// Mitigates: password brute-forcing / credential stuffing. After 5 failed
+// attempts the identifier is locked for 15 minutes. NOTE: this is the demo /
+// client-side control; in Clerk (production) the server enforces lockout, which
+// cannot be bypassed by editing localStorage.
+const MAX_LOGIN_ATTEMPTS = 5;
+const LOCKOUT_MS = 15 * 60 * 1000;
+const ATTEMPTS_KEY = "fairpool:loginAttempts";
+
+interface AttemptRecord { count: number; firstAt: number; lockedUntil: number }
+
+function readAttempts(): Record<string, AttemptRecord> {
+  if (!isBrowser()) return {};
+  try {
+    return JSON.parse(window.localStorage.getItem(ATTEMPTS_KEY) ?? "{}");
+  } catch {
+    return {};
+  }
+}
+function writeAttempts(a: Record<string, AttemptRecord>): void {
+  if (isBrowser()) window.localStorage.setItem(ATTEMPTS_KEY, JSON.stringify(a));
+}
+
+/** Remaining lockout seconds for an identifier, or 0 if not locked. */
+export function lockoutRemaining(identifier: string): number {
+  const rec = readAttempts()[identifier.trim().toLowerCase()];
+  if (!rec?.lockedUntil) return 0;
+  return Math.max(0, Math.ceil((rec.lockedUntil - Date.now()) / 1000));
+}
+
+function recordFailedAttempt(identifier: string): void {
+  const key = identifier.trim().toLowerCase();
+  const all = readAttempts();
+  const now = Date.now();
+  const rec = all[key] ?? { count: 0, firstAt: now, lockedUntil: 0 };
+  // Reset the window if the last burst expired.
+  if (now - rec.firstAt > LOCKOUT_MS) { rec.count = 0; rec.firstAt = now; rec.lockedUntil = 0; }
+  rec.count += 1;
+  if (rec.count >= MAX_LOGIN_ATTEMPTS) rec.lockedUntil = now + LOCKOUT_MS;
+  all[key] = rec;
+  writeAttempts(all);
+}
+
+function clearAttempts(identifier: string): void {
+  const all = readAttempts();
+  delete all[identifier.trim().toLowerCase()];
+  writeAttempts(all);
+}
+
 /**
  * Local auth: accepts either a 14-digit student ID or an email address.
  * Passwords escalate role for the demo: "super" → trueAdmin, "admin" → admin,
- * anything else → student. Blocked users are rejected.
+ * anything else → student. Blocked users are rejected. Enforces lockout after
+ * 5 failed attempts.
  */
 export function login(identifier: string, password: string): Profile | null {
+  // Refuse while locked out.
+  if (lockoutRemaining(identifier) > 0) return null;
   const db = load();
   const isEmail = identifier.includes("@");
   const role: Profile["role"] =
@@ -413,10 +466,10 @@ export function login(identifier: string, password: string): Profile | null {
   if (isEmail) {
     // Email login — must match an existing profile
     profile = db.profiles.find((p) => p.email === identifier);
-    if (!profile) return null;
+    if (!profile) { recordFailedAttempt(identifier); return null; }
   } else {
     // Student ID login
-    if (!/^\d{14}$/.test(identifier)) return null;
+    if (!/^\d{14}$/.test(identifier)) { recordFailedAttempt(identifier); return null; }
     profile = db.profiles.find((p) => p.studentId === identifier);
     if (!profile) {
       // Auto-create a demo profile for unknown IDs
@@ -440,10 +493,11 @@ export function login(identifier: string, password: string): Profile | null {
     }
   }
 
-  if (profile.blocked) return null;
+  if (profile.blocked) { recordFailedAttempt(identifier); return null; }
   // Allow demo role escalation but never demote the true admin.
   if (role !== "student" && profile.role !== "trueAdmin") profile.role = role;
 
+  clearAttempts(identifier); // successful auth resets the counter
   persist();
   rememberDevice(profile.id);
   touchActivity();
@@ -468,10 +522,11 @@ export function register(input: {
         ? "admin"
         : "student";
   const resolvedEmail = input.email?.trim() || `${input.studentId}@fairpool.local`;
+  const safeName = sanitizeName(input.name); // strip any HTML/script before storing (XSS)
   let profile = db.profiles.find((p) => p.studentId === input.studentId);
   if (profile) {
     if (profile.blocked) return null;
-    profile.name = input.name;
+    profile.name = safeName;
     profile.email = resolvedEmail;
     profile.departmentId = input.departmentId;
     profile.semester = input.semester;
@@ -480,7 +535,7 @@ export function register(input: {
     profile = {
       id: `user-${input.studentId}`,
       studentId: input.studentId,
-      name: input.name,
+      name: safeName,
       email: resolvedEmail,
       role,
       departmentId: input.departmentId,
