@@ -11,6 +11,7 @@ const tabs = [
   { href: "/admin/candidates", label: bn.admin.candidates },
   { href: "/admin/departments", label: bn.admin.departments },
   { href: "/admin/users", label: bn.admin.users },
+  { href: "/admin/audit-log", label: bn.admin.auditLog },
   { href: "/admin/settings", label: bn.admin.settings },
 ];
 

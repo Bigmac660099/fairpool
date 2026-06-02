@@ -9,10 +9,24 @@ import { isClerkMode } from "@/lib/auth-mode";
  * In local demo mode it renders children untouched, so the app runs with no
  * Clerk keys. ClerkProvider reads the publishable key from the environment —
  * we never pass it as a prop (per Clerk's guidance).
+ *
+ * taskUrls: configures where Clerk redirects after task flows like password
+ * reset. The /session-tasks/reset-password route renders <SignIn/> which
+ * continues the reset step in context.
  */
 export function AuthProvider({ children }: { children: ReactNode }) {
   if (isClerkMode) {
-    return <ClerkProvider afterSignOutUrl="/login">{children}</ClerkProvider>;
+    return (
+      <ClerkProvider
+        afterSignOutUrl="/login"
+        signInUrl="/sign-in"
+        signUpUrl="/sign-up"
+        signInFallbackRedirectUrl="/dashboard"
+        signUpFallbackRedirectUrl="/dashboard"
+      >
+        {children}
+      </ClerkProvider>
+    );
   }
   return <>{children}</>;
 }

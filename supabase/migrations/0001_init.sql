@@ -12,13 +12,15 @@ create table if not exists public.departments (
 
 create table if not exists public.profiles (
   id            uuid primary key default gen_random_uuid(),
-  student_id    text not null unique check (student_id ~ '^[0-9]{14}$'),
+  clerk_id      text unique,           -- Clerk user ID (null until Clerk is active)
+  student_id    text unique check (student_id ~ '^[0-9]{14}$'),
   name          text not null,
   email         text,
-  role          text not null default 'student' check (role in ('student','admin')),
+  role          text not null default 'student' check (role in ('student','admin','trueAdmin')),
   department_id uuid references public.departments(id) on delete set null,
   semester      int,
   active        boolean not null default true,
+  blocked       boolean not null default false,
   created_at    timestamptz not null default now()
 );
 

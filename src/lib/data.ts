@@ -378,41 +378,52 @@ function setSession(profile: Profile | null): void {
 }
 
 /**
- * Local auth: any 14-digit student id logs in. Passwords escalate role for the
- * demo: "super" → trueAdmin (the one true admin), "admin" → admin, anything
- * else → student. Blocked users are rejected. Returns null on rejection.
+ * Local auth: accepts either a 14-digit student ID or an email address.
+ * Passwords escalate role for the demo: "super" → trueAdmin, "admin" → admin,
+ * anything else → student. Blocked users are rejected.
  */
-export function login(studentId: string, password: string): Profile | null {
-  if (!/^\d{14}$/.test(studentId)) return null;
+export function login(identifier: string, password: string): Profile | null {
   const db = load();
-  let profile = db.profiles.find((p) => p.studentId === studentId);
+  const isEmail = identifier.includes("@");
   const role: Profile["role"] =
     password === "super" ? "trueAdmin" : password === "admin" ? "admin" : "student";
 
-  if (!profile) {
-    profile = {
-      id: `user-${studentId}`,
-      studentId,
-      name:
-        role === "trueAdmin"
-          ? "প্রধান প্রশাসক"
-          : role === "admin"
-            ? "প্রশাসক"
-            : `শিক্ষার্থী ${studentId.slice(-4)}`,
-      email: `${studentId}@fairpool.local`,
-      role,
-      departmentId: db.departments[0]?.id ?? null,
-      semester: 1,
-      active: true,
-      blocked: false,
-    };
-    db.profiles.push(profile);
+  let profile: Profile | undefined;
+
+  if (isEmail) {
+    // Email login — must match an existing profile
+    profile = db.profiles.find((p) => p.email === identifier);
+    if (!profile) return null;
   } else {
-    // Existing user: a blocked account cannot sign in.
-    if (profile.blocked) return null;
-    // Allow demo role escalation, but never silently demote the true admin.
-    if (role !== "student" && profile.role !== "trueAdmin") profile.role = role;
+    // Student ID login
+    if (!/^\d{14}$/.test(identifier)) return null;
+    profile = db.profiles.find((p) => p.studentId === identifier);
+    if (!profile) {
+      // Auto-create a demo profile for unknown IDs
+      profile = {
+        id: `user-${identifier}`,
+        studentId: identifier,
+        name:
+          role === "trueAdmin"
+            ? "প্রধান প্রশাসক"
+            : role === "admin"
+              ? "প্রশাসক"
+              : `শিক্ষার্থী ${identifier.slice(-4)}`,
+        email: `${identifier}@fairpool.local`,
+        role,
+        departmentId: db.departments[0]?.id ?? null,
+        semester: 1,
+        active: true,
+        blocked: false,
+      };
+      db.profiles.push(profile);
+    }
   }
+
+  if (profile.blocked) return null;
+  // Allow demo role escalation but never demote the true admin.
+  if (role !== "student" && profile.role !== "trueAdmin") profile.role = role;
+
   persist();
   rememberDevice(profile.id);
   touchActivity();
@@ -423,6 +434,7 @@ export function login(studentId: string, password: string): Profile | null {
 export function register(input: {
   studentId: string;
   name: string;
+  email?: string;
   password: string;
   departmentId: string;
   semester: number;
@@ -435,10 +447,12 @@ export function register(input: {
       : input.password === "admin"
         ? "admin"
         : "student";
+  const resolvedEmail = input.email?.trim() || `${input.studentId}@fairpool.local`;
   let profile = db.profiles.find((p) => p.studentId === input.studentId);
   if (profile) {
     if (profile.blocked) return null;
     profile.name = input.name;
+    profile.email = resolvedEmail;
     profile.departmentId = input.departmentId;
     profile.semester = input.semester;
     if (role !== "student" && profile.role !== "trueAdmin") profile.role = role;
@@ -447,7 +461,7 @@ export function register(input: {
       id: `user-${input.studentId}`,
       studentId: input.studentId,
       name: input.name,
-      email: `${input.studentId}@fairpool.local`,
+      email: resolvedEmail,
       role,
       departmentId: input.departmentId,
       semester: input.semester,
