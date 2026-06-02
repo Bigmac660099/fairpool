@@ -26,7 +26,7 @@ import { withinRadius, haversineMeters } from "./geo";
  * one-vote-per-person, and a simple per-user rate limit.
  */
 
-const STORAGE_KEY = "fairpool:v3";
+const STORAGE_KEY = "fairpool:v4";
 const SESSION_KEY = "fairpool:session";
 // Re-auth is required after this much inactivity (3 hours).
 export const INACTIVITY_MS = 3 * 60 * 60 * 1000;
@@ -181,15 +181,27 @@ function seed(): DB {
       columns: [
         {
           title: "ভোটিং",
-          links: ["চলমান নির্বাচন", "ফলাফল", "প্রার্থী তালিকা"],
+          links: [
+            { label: "চলমান নির্বাচন", href: "/vote" },
+            { label: "ফলাফল", href: "/results" },
+            { label: "প্রার্থী তালিকা", href: "/vote" },
+          ],
         },
         {
           title: "সহায়তা",
-          links: ["কীভাবে ভোট দেবেন", "প্রশ্নোত্তর", "যোগাযোগ"],
+          links: [
+            { label: "কীভাবে ভোট দেবেন", href: "/faq" },
+            { label: "প্রশ্নোত্তর", href: "/faq" },
+            { label: "যোগাযোগ", href: "/contact" },
+          ],
         },
         {
           title: "নীতিমালা",
-          links: ["শর্তাবলী", "গোপনীয়তা নীতি", "নিরপেক্ষতা"],
+          links: [
+            { label: "শর্তাবলী", href: "/terms" },
+            { label: "গোপনীয়তা নীতি", href: "/privacy" },
+            { label: "নিরপেক্ষতা", href: "/terms#fairness" },
+          ],
         },
       ],
       copyright: "সর্বস্বত্ব সংরক্ষিত © ২০২৪ - ২০২৬ । ফেয়ারপুল",

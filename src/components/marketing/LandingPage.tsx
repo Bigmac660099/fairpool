@@ -419,8 +419,8 @@ export function LandingPage() {
                     {toBn(i + 1)}
                   </span>
                 </div>
-                <h3 className="mb-2 font-semibold tracking-tight">{step.title}</h3>
-                <p className="text-sm leading-relaxed text-foreground/65">{step.desc}</p>
+                <h3 className="mb-2 font-semibold tracking-tight text-foreground">{step.title}</h3>
+                <p className="text-sm leading-relaxed text-foreground">{step.desc}</p>
               </motion.div>
             ))}
           </div>
@@ -430,7 +430,7 @@ export function LandingPage() {
       {/* ══ TRUST BAND ═════════════════════════════════════════════ */}
       <section className="border-y border-border/50 py-16 px-5">
         <div className="mx-auto max-w-5xl">
-          <p className="mb-8 text-center text-sm font-semibold uppercase tracking-widest text-foreground/50">
+          <p className="mb-8 text-center text-sm font-semibold uppercase tracking-widest text-foreground">
             বিশ্বস্ত প্রতিষ্ঠানসমূহ
           </p>
           <TrustedUniversities />
@@ -465,7 +465,7 @@ export function LandingPage() {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ delay: 0.15 }}
-            className="mt-4 text-foreground/65"
+            className="mt-4 text-foreground"
           >
             স্বচ্ছ, নিরাপদ ও আধুনিক বিশ্ববিদ্যালয় নির্বাচনের জন্য এখনই নিবন্ধন করুন।
           </motion.p>

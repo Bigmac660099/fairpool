@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { Facebook, Youtube, Mail, MapPin, Phone, ShieldCheck } from "lucide-react";
 import { getSettings } from "@/lib/data";
 import { useStoreSync } from "@/lib/hooks";
@@ -100,10 +101,13 @@ export function SiteFooter() {
             </h4>
             <ul className="space-y-2.5">
               {col.links.map((link) => (
-                <li key={link}>
-                  <span className="cursor-pointer text-sm text-white/55 transition-colors hover:text-white">
-                    {link}
-                  </span>
+                <li key={link.label}>
+                  <Link
+                    href={link.href}
+                    className="text-sm text-white/55 transition-colors hover:text-white hover:underline"
+                  >
+                    {link.label}
+                  </Link>
                 </li>
               ))}
             </ul>

@@ -52,7 +52,7 @@ export interface SiteSettings {
     facebookFans: string;
     youtubeUrl: string;
     youtubeSubs: string;
-    columns: { title: string; links: string[] }[];
+    columns: { title: string; links: { label: string; href: string }[] }[];
     copyright: string;
   };
 }
