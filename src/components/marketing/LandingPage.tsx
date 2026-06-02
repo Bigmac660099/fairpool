@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardBody } from "@/components/ui/card";
 import { toBn } from "@/lib/utils";
+import { bn } from "@/i18n/bn";
 
 const HeroGeometric = dynamic(
   () => import("@/components/ui/hero-geometric").then((m) => m.HeroGeometric),
@@ -85,10 +86,12 @@ function LandingNav() {
     >
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
         <Link href="/" className="flex items-center gap-2.5">
-          <span className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-teal-400 text-xs font-black text-white shadow-glow-sm">
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-xs font-black text-primary-foreground">
             FP
           </span>
-          <span className={`fp-gradient text-lg font-black tracking-tighter`}>ফেয়ারপুল</span>
+          <span className={`text-base font-bold tracking-tight ${scrolled ? "text-foreground" : "text-white"}`}>
+            {bn.app.name}
+          </span>
         </Link>
 
         <nav className="hidden items-center gap-6 md:flex">
@@ -494,7 +497,7 @@ function SecurityCard({
       viewport={{ once: true }}
       transition={{ delay, duration: 0.5 }}
     >
-      <Card variant="glow" className="h-full">
+      <Card variant="raised" className="h-full">
         <CardBody className="flex flex-col gap-4">
           {/* Visual illustration */}
           <div className="flex h-32 items-center justify-center rounded-xl bg-gradient-to-br from-primary/8 to-teal-400/5">

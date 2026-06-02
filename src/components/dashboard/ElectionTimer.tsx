@@ -1,8 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Zap } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
 import { bn } from "@/i18n/bn";
 import { toBn } from "@/lib/utils";
 
@@ -19,66 +17,42 @@ export function ElectionTimer({ endsAt, title }: Props) {
   const ended = remaining.total <= 0;
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/8 via-transparent to-teal-400/5 p-5">
-      {/* Header row */}
-      <div className="mb-4 flex items-center justify-between">
-        <p className="max-w-[70%] truncate text-sm font-medium text-foreground/80">{title}</p>
+    <div className="rounded-xl border border-border/70 bg-card p-5 shadow-card">
+      <div className="mb-4 flex items-center justify-between gap-2">
+        <p className="truncate text-sm font-medium text-foreground/80">{title}</p>
         {!ended && (
-          <span className="fp-scan relative inline-flex items-center gap-1.5 overflow-hidden rounded-full border border-emerald-400/40 bg-emerald-400/10 px-2.5 py-0.5 text-xs font-semibold text-emerald-400">
-            <span className="h-1.5 w-1.5 animate-ping rounded-full bg-emerald-400" />
+          <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
             চলমান
           </span>
         )}
       </div>
 
       {ended ? (
-        <p className="text-lg font-bold text-destructive">{bn.dashboard.timeEnded}</p>
+        <p className="text-base font-semibold text-destructive">{bn.dashboard.timeEnded}</p>
       ) : (
-        <div className="flex items-stretch gap-2.5">
+        <div className="flex items-stretch gap-2">
           {[
             { v: remaining.days,    l: bn.common.days },
             { v: remaining.hours,   l: bn.common.hours },
             { v: remaining.minutes, l: bn.common.minutes },
             { v: remaining.seconds, l: bn.common.seconds },
-          ].map(({ v, l }, idx) => (
-            <GlassUnit key={l} value={v} label={l} delay={idx * 0.04} />
+          ].map(({ v, l }) => (
+            <div
+              key={l}
+              className="flex flex-1 flex-col items-center gap-1 rounded-lg border border-border/60 bg-muted/40 py-3"
+            >
+              <span className="text-xl font-bold tabular-nums text-primary leading-none">
+                {toBn(String(v).padStart(2, "0"))}
+              </span>
+              <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+                {l}
+              </span>
+            </div>
           ))}
         </div>
       )}
-
-      {/* Bottom teal accent line */}
-      <div className="mt-4 flex items-center gap-2 text-xs text-muted-foreground">
-        <Zap className="h-3 w-3 text-primary" />
-        <span>রিয়েল-টাইম কাউন্টডাউন</span>
-      </div>
     </div>
-  );
-}
-
-function GlassUnit({ value, label, delay }: { value: number; label: string; delay: number }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-      className="flex flex-1 flex-col items-center gap-1 rounded-xl border border-primary/20 bg-primary/6 py-2.5 shadow-sm backdrop-blur-sm"
-    >
-      <AnimatePresence mode="popLayout">
-        <motion.span
-          key={value}
-          initial={{ y: -8, opacity: 0 }}
-          animate={{ y: 0,  opacity: 1 }}
-          exit={{   y:  8, opacity: 0 }}
-          transition={{ duration: 0.18 }}
-          className="fp-gradient text-2xl font-bold tabular-nums leading-none"
-        >
-          {toBn(String(value).padStart(2, "0"))}
-        </motion.span>
-      </AnimatePresence>
-      <span className="text-[9px] font-medium uppercase tracking-widest text-muted-foreground">
-        {label}
-      </span>
-    </motion.div>
   );
 }
 

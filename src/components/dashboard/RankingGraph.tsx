@@ -6,19 +6,6 @@ import { toBn } from "@/lib/utils";
 import { bn } from "@/i18n/bn";
 import { cn } from "@/lib/utils";
 
-const MEDAL = ["🥇", "🥈", "🥉"];
-
-const barColors = [
-  "from-yellow-400 to-amber-400",
-  "from-slate-300 to-slate-400",
-  "from-amber-600 to-amber-700",
-];
-const barGlow = [
-  "shadow-yellow-400/30",
-  "shadow-slate-300/20",
-  "shadow-amber-600/20",
-];
-
 export function RankingGraph({
   candidates,
   tallies,
@@ -27,6 +14,7 @@ export function RankingGraph({
   tallies: Tally[];
 }) {
   const max = Math.max(1, ...tallies.map((t) => t.count));
+  const total = tallies.reduce((s, t) => s + t.count, 0);
   const rows = candidates
     .map((c) => ({
       candidate: c,
@@ -37,54 +25,52 @@ export function RankingGraph({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold tracking-tight">{bn.dashboard.leaderboard}</h3>
-        <span className="text-xs text-muted-foreground">
-          {bn.results.totalVotes}: {toBn(tallies.reduce((s, t) => s + t.count, 0))}
-        </span>
+        <p className="text-sm font-semibold">{bn.dashboard.leaderboard}</p>
+        {total > 0 && (
+          <p className="text-xs text-muted-foreground">
+            {bn.results.totalVotes}: {toBn(total)}
+          </p>
+        )}
       </div>
 
       {rows.map(({ candidate, count }, i) => {
-        const pct = max > 0 ? (count / max) * 100 : 0;
-        const isTop3 = i < 3;
+        const pct = (count / max) * 100;
+        const isFirst = i === 0;
         return (
-          <div key={candidate.id} className="group flex items-center gap-3">
-            {/* Rank badge */}
+          <div key={candidate.id} className="flex items-center gap-3">
+            {/* Rank number */}
             <div
               className={cn(
-                "flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold",
-                isTop3
-                  ? "bg-primary/10 text-primary"
+                "flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold",
+                isFirst
+                  ? "bg-primary text-primary-foreground"
                   : "bg-muted text-muted-foreground",
               )}
             >
-              {isTop3 ? MEDAL[i] : toBn(i + 1)}
+              {toBn(i + 1)}
             </div>
 
             <div className="min-w-0 flex-1">
-              <div className="mb-1.5 flex justify-between text-sm">
-                <span className="truncate font-semibold">{candidate.name}</span>
-                <span className="ml-2 tabular-nums text-muted-foreground">
+              <div className="mb-1.5 flex items-center justify-between gap-2 text-sm">
+                <span className="truncate font-medium">{candidate.name}</span>
+                <span className="shrink-0 tabular-nums text-muted-foreground text-xs">
                   {toBn(count)} {bn.results.votes}
                 </span>
               </div>
-
-              {/* Bar */}
-              <div className="h-3 overflow-hidden rounded-full bg-muted">
+              <div className="h-2 overflow-hidden rounded-full bg-muted">
                 <motion.div
                   className={cn(
-                    "h-full rounded-full bg-gradient-to-r shadow-sm",
-                    isTop3 ? barColors[i] : "from-primary/70 to-primary/40",
-                    isTop3 ? barGlow[i] : "",
+                    "h-full rounded-full",
+                    isFirst ? "bg-primary" : "bg-primary/40",
                   )}
                   initial={{ width: 0 }}
                   animate={{ width: `${pct}%` }}
-                  transition={{ duration: 0.75, delay: i * 0.07, ease: [0.22, 1, 0.36, 1] }}
+                  transition={{ duration: 0.65, delay: i * 0.06, ease: [0.22, 1, 0.36, 1] }}
                 />
               </div>
             </div>
 
-            {/* Percentage */}
-            <span className="w-12 shrink-0 text-right text-xs font-medium tabular-nums text-muted-foreground">
+            <span className="w-10 shrink-0 text-right text-xs tabular-nums text-muted-foreground">
               {max > 0 ? `${toBn(Math.round(pct))}%` : "—"}
             </span>
           </div>

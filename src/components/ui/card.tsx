@@ -1,21 +1,24 @@
 import type { HTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
 
-type CardVariant = "default" | "glow" | "raised" | "flat" | "glass" | "dark";
+type CardVariant = "default" | "raised" | "outline" | "ghost" | "tinted";
 
-const cardVariants: Record<CardVariant, string> = {
+const variants: Record<CardVariant, string> = {
+  /* Subtle 1px border + light shadow — the workhorse */
   default:
-    "rounded-2xl border border-border/60 bg-card text-card-foreground shadow-sm backdrop-blur-sm transition-shadow",
-  glass:
-    "rounded-2xl border border-white/12 bg-white/6 text-card-foreground shadow-sm backdrop-blur-xl",
-  glow:
-    "rounded-2xl border border-primary/30 bg-card text-card-foreground shadow-lg shadow-primary/10 ring-1 ring-primary/15 backdrop-blur-sm transition-all hover:shadow-primary/20 hover:border-primary/45",
+    "bg-card border border-border/70 shadow-card",
+  /* Slightly elevated — hover lifts for interactive cards */
   raised:
-    "rounded-2xl border border-border/40 bg-card text-card-foreground shadow-card-raised backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover",
-  flat:
-    "rounded-2xl border border-border/40 bg-card text-card-foreground",
-  dark:
-    "rounded-2xl border border-white/8 bg-black/30 text-white shadow-xl backdrop-blur-xl",
+    "bg-card border border-border/60 shadow-card-md transition-shadow duration-200 hover:shadow-card-lg",
+  /* No fill, just border — for secondary groupings */
+  outline:
+    "bg-transparent border border-border",
+  /* No shadow, no border — for subtle groupings within a card */
+  ghost:
+    "bg-muted/50 border border-transparent",
+  /* Very light primary tint — for status/info zones */
+  tinted:
+    "bg-primary/5 border border-primary/15 dark:bg-primary/8 dark:border-primary/20",
 };
 
 interface CardProps extends HTMLAttributes<HTMLDivElement> {
@@ -25,7 +28,7 @@ interface CardProps extends HTMLAttributes<HTMLDivElement> {
 export function Card({ className, variant = "default", ...props }: CardProps) {
   return (
     <div
-      className={cn(cardVariants[variant], className)}
+      className={cn("rounded-xl text-card-foreground", variants[variant], className)}
       {...props}
     />
   );
@@ -38,7 +41,7 @@ export function CardBody({ className, ...props }: HTMLAttributes<HTMLDivElement>
 export function CardHeader({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn("flex flex-col gap-1.5 border-b border-border/40 px-5 py-4", className)}
+      className={cn("px-5 pt-5 pb-4 border-b border-border/50", className)}
       {...props}
     />
   );
@@ -47,7 +50,16 @@ export function CardHeader({ className, ...props }: HTMLAttributes<HTMLDivElemen
 export function CardTitle({ className, ...props }: HTMLAttributes<HTMLHeadingElement>) {
   return (
     <h3
-      className={cn("text-base font-semibold leading-tight tracking-tight", className)}
+      className={cn("text-sm font-semibold tracking-tight text-foreground", className)}
+      {...props}
+    />
+  );
+}
+
+export function CardDescription({ className, ...props }: HTMLAttributes<HTMLParagraphElement>) {
+  return (
+    <p
+      className={cn("text-sm text-muted-foreground mt-0.5", className)}
       {...props}
     />
   );

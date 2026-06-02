@@ -154,7 +154,7 @@ export default function AdminOverviewPage() {
               </CardTitle>
               <Button
                 size="xs"
-                variant="glow"
+                variant="outline"
                 onClick={() => router.push("/admin/audit-log")}
               >
                 সব লগ দেখুন
@@ -195,7 +195,7 @@ export default function AdminOverviewPage() {
               </CardTitle>
               <Button
                 size="xs"
-                variant="glow"
+                variant="outline"
                 onClick={() => router.push("/admin/elections")}
               >
                 পরিচালনা করুন

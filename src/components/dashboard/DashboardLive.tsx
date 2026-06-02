@@ -1,8 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Vote, BarChart3, Users, CheckCircle2, TrendingUp } from "lucide-react";
-import { motion } from "framer-motion";
+import { Vote, BarChart3, Users, CheckCircle2, Activity } from "lucide-react";
 import { LiquidBlob } from "@/components/ui/liquid-blob";
 import { Card, CardBody } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,10 +11,7 @@ import { ElectionTimer } from "./ElectionTimer";
 import { RankingGraph } from "./RankingGraph";
 import { MotionCarousel } from "@/components/ui/motion-carousel";
 import {
-  getActiveElection,
-  getCandidates,
-  getTallies,
-  hasVoted,
+  getActiveElection, getCandidates, getTallies, hasVoted,
 } from "@/lib/data";
 import { useAuth, useStoreSync } from "@/lib/hooks";
 import { bn } from "@/i18n/bn";
@@ -23,7 +19,7 @@ import { firstName, toBn } from "@/lib/utils";
 
 export function DashboardLive() {
   useStoreSync();
-  const router = useRouter();
+  const router  = useRouter();
   const { user } = useAuth();
   const election = getActiveElection();
 
@@ -32,7 +28,7 @@ export function DashboardLive() {
       <>
         <LiquidBlob />
         <Reveal>
-          <Card variant="glow">
+          <Card>
             <CardBody className="py-16 text-center text-muted-foreground">
               {bn.dashboard.noElection}
             </CardBody>
@@ -52,79 +48,63 @@ export function DashboardLive() {
       <LiquidBlob />
 
       <div className="space-y-5">
-        {/* ── Greeting hero ─────────────────────────────────────────── */}
+        {/* ── Greeting ──────────────────────────────────────────── */}
         <Reveal>
-          <div className="relative overflow-hidden rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/10 via-teal-400/5 to-transparent p-5">
-            {/* Large faded initial in background */}
-            <span
-              aria-hidden
-              className="pointer-events-none absolute -right-4 -top-6 select-none text-[7rem] font-black leading-none text-primary/8"
-            >
-              {user?.name?.trim().charAt(0) ?? "F"}
-            </span>
-
-            <div className="relative flex items-center gap-4">
-              <Avatar name={user?.name ?? "?"} size="lg" glow />
-              <div>
-                <p className="text-sm text-muted-foreground">{bn.dashboard.greeting},</p>
-                <h1 className="text-display-xs font-bold tracking-tight">{user?.name}</h1>
-                {voted && (
-                  <span className="mt-1 inline-flex items-center gap-1 text-xs font-medium text-emerald-500">
-                    <CheckCircle2 className="h-3.5 w-3.5" />
-                    ভোট দেওয়া হয়েছে
-                  </span>
-                )}
-              </div>
+          <div className="flex items-center gap-3.5">
+            <Avatar name={user?.name ?? "?"} size="lg" />
+            <div>
+              <p className="text-xs text-muted-foreground">{bn.dashboard.greeting}</p>
+              <h1 className="text-xl font-bold tracking-tight">{user?.name}</h1>
+              {voted && (
+                <span className="mt-0.5 inline-flex items-center gap-1 text-xs font-medium text-emerald-600 dark:text-emerald-400">
+                  <CheckCircle2 className="h-3 w-3" />
+                  ভোট দেওয়া হয়েছে
+                </span>
+              )}
             </div>
-
-            {/* Bottom accent line */}
-            <div className="absolute inset-x-0 bottom-0 h-0.5 bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
           </div>
         </Reveal>
 
-        {/* ── Election timer ────────────────────────────────────────── */}
-        <Reveal delay={0.05}>
+        {/* ── Timer ─────────────────────────────────────────────── */}
+        <Reveal delay={0.04}>
           <ElectionTimer endsAt={election.endsAt} title={election.title} />
         </Reveal>
 
-        {/* ── KPI tiles ─────────────────────────────────────────────── */}
+        {/* ── KPI tiles ─────────────────────────────────────────── */}
         <RevealStack className="grid grid-cols-3 gap-3">
           <RevealItem>
-            <KpiTile
-              icon={<Vote className="h-5 w-5" />}
+            <StatTile
+              icon={<Vote className="h-4 w-4" />}
               value={toBn(totalVotes)}
               label={bn.dashboard.statVotes}
-              accent="from-primary to-teal-400"
             />
           </RevealItem>
           <RevealItem>
-            <KpiTile
-              icon={<Users className="h-5 w-5" />}
+            <StatTile
+              icon={<Users className="h-4 w-4" />}
               value={toBn(candidates.length)}
               label={bn.dashboard.statCandidates}
-              accent="from-teal-400 to-emerald-400"
             />
           </RevealItem>
           <RevealItem>
-            <KpiTile
-              icon={<TrendingUp className="h-5 w-5" />}
+            <StatTile
+              icon={<Activity className="h-4 w-4" />}
               value={election.geoRequired ? "GPS" : "খোলা"}
               label="যাচাই"
-              accent="from-emerald-400 to-teal-600"
             />
           </RevealItem>
         </RevealStack>
 
-        {/* ── Leaderboard ───────────────────────────────────────────── */}
+        {/* ── Leaderboard ───────────────────────────────────────── */}
         <Reveal>
-          <Card variant="raised">
+          <Card>
             <CardBody>
               <RankingGraph candidates={candidates} tallies={tallies} />
             </CardBody>
           </Card>
         </Reveal>
 
-        {/* ── Candidate carousel ────────────────────────────────────── */}
+        {/* ── Candidate carousel ────────────────────────────────── */}
         <Reveal>
           <MotionCarousel
             slides={candidates}
@@ -134,18 +114,18 @@ export function DashboardLive() {
                 name={c.name}
                 photoUrl={c.photoUrl}
                 department={c.promises[0] ?? ""}
-                className="h-56 w-full"
+                className="h-52 w-full"
               />
             )}
           />
         </Reveal>
 
-        {/* ── CTA buttons ───────────────────────────────────────────── */}
+        {/* ── CTAs ──────────────────────────────────────────────── */}
         <Reveal>
           <div className="flex flex-col gap-3 sm:flex-row">
             {voted ? (
-              <div className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-emerald-400/30 bg-emerald-400/8 px-4 py-3 text-sm font-semibold text-emerald-600 dark:text-emerald-400">
-                <CheckCircle2 className="h-5 w-5" />
+              <div className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-emerald-500/25 bg-emerald-500/8 px-4 py-3 text-sm font-medium text-emerald-700 dark:text-emerald-400">
+                <CheckCircle2 className="h-4 w-4" />
                 {bn.dashboard.alreadyVoted}
               </div>
             ) : (
@@ -154,7 +134,7 @@ export function DashboardLive() {
                 className="flex-1"
                 onClick={() => router.push(`/vote/${election.id}`)}
               >
-                <Vote className="h-5 w-5" />
+                <Vote className="h-4 w-4" />
                 {bn.dashboard.voteNow}
               </Button>
             )}
@@ -164,7 +144,7 @@ export function DashboardLive() {
               className="flex-1"
               onClick={() => router.push(`/results/${election.id}`)}
             >
-              <BarChart3 className="h-5 w-5" />
+              <BarChart3 className="h-4 w-4" />
               {bn.dashboard.seeResults}
             </Button>
           </div>
@@ -174,41 +154,24 @@ export function DashboardLive() {
   );
 }
 
-function KpiTile({
+function StatTile({
   icon,
   value,
   label,
-  accent,
 }: {
   icon: React.ReactNode;
   value: string;
   label: string;
-  accent: string;
 }) {
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-primary/15 bg-card p-4 shadow-sm">
-      {/* Glowing icon circle */}
-      <div
-        className={`mb-3 inline-flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br ${accent} text-white shadow-glow-sm`}
-      >
-        {icon}
-      </div>
-
-      {/* Value */}
-      <motion.div
-        initial={{ opacity: 0, y: 6 }}
-        animate={{ opacity: 1, y: 0 }}
-        className={`fp-gradient text-3xl font-black tabular-nums leading-none`}
-      >
-        {value}
-      </motion.div>
-
-      <p className="mt-1 text-[11px] font-medium text-muted-foreground">{label}</p>
-
-      {/* Bottom accent line */}
-      <div
-        className={`absolute inset-x-0 bottom-0 h-0.5 bg-gradient-to-r ${accent}`}
-      />
-    </div>
+    <Card>
+      <CardBody className="flex flex-col items-center gap-1.5 p-4 text-center">
+        <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+          {icon}
+        </span>
+        <span className="text-2xl font-bold tabular-nums text-foreground">{value}</span>
+        <span className="text-[11px] font-medium text-muted-foreground">{label}</span>
+      </CardBody>
+    </Card>
   );
 }
