@@ -4,76 +4,85 @@
 
 /* ═══════════════════════════════════════════════════════════════
    FAIRPOOL — design tokens.
-   Primary: hsl(185 65% 32%) = #1B7C8A
+   Primary (light):  hsl(192 91% 37%) = #0891B2  — clear cyan-teal
+   Primary (dark):   hsl(192 85% 52%) = #12C2E3  — electric bright
+   Dark background:  hsl(221 52% 7%)  = #08112A  — deep navy, not grey
    ═══════════════════════════════════════════════════════════════ */
 
 @layer base {
   :root {
-    --background:        210 20% 98%;
-    --foreground:        215 30% 10%;
-    --card:              0 0% 100%;
-    --card-foreground:   215 30% 10%;
-    --popover:           0 0% 100%;
-    --popover-foreground:215 30% 10%;
+    /* ── Surfaces ─────────────────────────────────────────── */
+    --background:         0 0% 100%;          /* Pure white — no dirty warm tint */
+    --foreground:         222 47% 10%;        /* Deep navy-black — premium */
+    --card:               0 0% 100%;
+    --card-foreground:    222 47% 10%;
+    --popover:            0 0% 100%;
+    --popover-foreground: 222 47% 10%;
 
-    --primary:           185 65% 32%;
-    --primary-foreground:0 0% 100%;
+    /* ── Brand: vibrant cyan-teal ─────────────────────────── */
+    --primary:            192 91% 37%;        /* #0891B2 */
+    --primary-foreground: 0 0% 100%;
 
-    --secondary:         210 16% 94%;
-    --secondary-foreground:215 25% 25%;
-    --muted:             210 16% 94%;
-    --muted-foreground:  215 14% 46%;
-    --accent:            185 35% 92%;
-    --accent-foreground: 185 55% 22%;
+    /* ── Supporting ───────────────────────────────────────── */
+    --secondary:          210 20% 95%;
+    --secondary-foreground: 222 38% 22%;
+    --muted:              210 16% 95%;
+    --muted-foreground:   215 16% 48%;
+    --accent:             192 48% 92%;
+    --accent-foreground:  192 70% 22%;
 
-    --destructive:       0 70% 48%;
-    --destructive-foreground:0 0% 100%;
+    --destructive:        0 72% 50%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border:            215 12% 88%;
-    --input:             215 12% 88%;
-    --ring:              185 65% 32%;
+    --border:             214 20% 89%;
+    --input:              214 20% 89%;
+    --ring:               192 91% 37%;
 
-    --sidebar:           0 0% 100%;
-    --sidebar-foreground:215 28% 18%;
-    --sidebar-accent:    185 30% 93%;
-    --sidebar-accent-foreground:185 55% 22%;
-    --sidebar-border:    215 12% 90%;
-    --sidebar-ring:      185 65% 32%;
+    /* ── Sidebar — subtly tinted ──────────────────────────── */
+    --sidebar:            210 28% 98%;
+    --sidebar-foreground: 222 40% 16%;
+    --sidebar-accent:     192 48% 92%;
+    --sidebar-accent-foreground: 192 70% 22%;
+    --sidebar-border:     214 20% 91%;
+    --sidebar-ring:       192 91% 37%;
 
     --radius: 0.75rem;
   }
 
   .dark {
-    --background:        220 18% 8%;
-    --foreground:        210 15% 93%;
-    --card:              220 16% 11%;
-    --card-foreground:   210 15% 93%;
-    --popover:           220 16% 11%;
-    --popover-foreground:210 15% 93%;
+    /* ── Deep navy surfaces ───────────────────────────────── */
+    --background:         221 52% 7%;         /* #08112A — premium deep navy */
+    --foreground:         210 30% 94%;
+    --card:               221 45% 10%;        /* #0D1930 — slightly lighter */
+    --card-foreground:    210 30% 94%;
+    --popover:            221 45% 10%;
+    --popover-foreground: 210 30% 94%;
 
-    --primary:           185 55% 46%;
-    --primary-foreground:220 18% 8%;
+    /* ── Brand: electric bright teal on dark ──────────────── */
+    --primary:            192 85% 52%;        /* #12C2E3 — electric, pops on navy */
+    --primary-foreground: 221 52% 7%;
 
-    --secondary:         220 14% 16%;
-    --secondary-foreground:210 12% 88%;
-    --muted:             220 14% 16%;
-    --muted-foreground:  215 12% 58%;
-    --accent:            185 35% 18%;
-    --accent-foreground: 185 45% 76%;
+    --secondary:          221 38% 16%;
+    --secondary-foreground: 210 22% 86%;
+    --muted:              221 35% 14%;
+    --muted-foreground:   215 16% 60%;
+    --accent:             192 50% 18%;
+    --accent-foreground:  192 65% 80%;
 
-    --destructive:       0 58% 52%;
-    --destructive-foreground:0 0% 98%;
+    --destructive:        0 60% 52%;
+    --destructive-foreground: 0 0% 98%;
 
-    --border:            220 12% 20%;
-    --input:             220 12% 22%;
-    --ring:              185 55% 50%;
+    --border:             221 28% 20%;
+    --input:              221 28% 22%;
+    --ring:               192 85% 52%;
 
-    --sidebar:           220 18% 10%;
-    --sidebar-foreground:210 12% 88%;
-    --sidebar-accent:    185 35% 18%;
-    --sidebar-accent-foreground:185 45% 76%;
-    --sidebar-border:    220 12% 20%;
-    --sidebar-ring:      185 55% 50%;
+    /* ── Sidebar — deeper navy ────────────────────────────── */
+    --sidebar:            221 55% 9%;
+    --sidebar-foreground: 210 25% 88%;
+    --sidebar-accent:     192 50% 18%;
+    --sidebar-accent-foreground: 192 65% 80%;
+    --sidebar-border:     221 28% 20%;
+    --sidebar-ring:       192 85% 52%;
   }
 }
 
@@ -88,7 +97,20 @@
 
   body {
     @apply bg-background text-foreground font-bengali antialiased;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    /* Smooth theme transition — background only, not text (avoids flash) */
+    transition: background-color 0.25s ease;
+    line-height: 1.6;
+  }
+
+  /* Better heading defaults */
+  h1, h2, h3, h4, h5, h6 {
+    line-height: 1.25;
+    font-weight: 600;
+  }
+
+  /* Readable paragraph spacing */
+  p {
+    line-height: 1.65;
   }
 }
 
@@ -98,16 +120,6 @@
   75%, 100% { transform: scale(2.4); opacity: 0; }
 }
 
-@keyframes fp-pulse-dot {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.4; }
-}
-
-@keyframes fp-count-up {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
 @keyframes fp-float {
   0%, 100% { transform: translateY(0px); }
   50%       { transform: translateY(-8px); }
@@ -115,13 +127,13 @@
 
 /* ── Utilities ────────────────────────────────────────────────── */
 @layer utilities {
-  /* Brand gradient text — use sparingly (logo, hero headline) */
+  /* Brand gradient text — hero headings and logo only */
   .fp-gradient {
     background: linear-gradient(
       135deg,
-      hsl(var(--primary)) 0%,
-      #2dd4bf 60%,
-      #34d399 100%
+      hsl(192 91% 37%) 0%,
+      #06B6D4 55%,
+      #10B981 100%
     );
     -webkit-background-clip: text;
     background-clip: text;
@@ -129,20 +141,34 @@
     color: transparent;
   }
 
-  /* Section label — uppercase chip */
+  /* Dark-mode variant — brighter gradient */
+  .dark .fp-gradient {
+    background: linear-gradient(
+      135deg,
+      hsl(192 85% 52%) 0%,
+      #22D3EE 55%,
+      #34D399 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  /* Section label chip */
   .fp-label {
-    @apply inline-flex items-center gap-1.5 rounded-full border border-primary/20
+    @apply inline-flex items-center gap-1.5 rounded-full border border-primary/25
            bg-primary/10 px-3 py-1 text-xs font-semibold tracking-widest
            uppercase text-primary;
   }
 
-  /* Float animation for marketing elements */
+  /* Float animation for marketing decorations */
   .fp-float {
     animation: fp-float 4s ease-in-out infinite;
   }
 }
 
-/* ── GPS marker ───────────────────────────────────────────────── */
+/* ── GPS pulsing marker ───────────────────────────────────────── */
 .fp-user-marker {
   position: relative;
   width: 22px;
@@ -153,19 +179,19 @@
   position: absolute;
   inset: 0;
   border-radius: 9999px;
-  background: rgba(27, 124, 138, 0.5);
+  background: rgba(8, 145, 178, 0.45);  /* matches new primary #0891B2 */
   animation: fp-ping 1.6s cubic-bezier(0, 0, 0.2, 1) infinite;
 }
 .fp-user-dot {
   position: absolute;
   inset: 5px;
   border-radius: 9999px;
-  background: #1b7c8a;
+  background: #0891B2;
   border: 2px solid #fff;
-  box-shadow: 0 0 8px 2px rgba(95, 224, 230, 0.6);
+  box-shadow: 0 0 8px 2px rgba(6, 182, 212, 0.55);
 }
 
-/* ── Thin scrollbar ───────────────────────────────────────────── */
+/* ── Scrollbar ────────────────────────────────────────────────── */
 .fp-scroll::-webkit-scrollbar       { width: 4px; }
 .fp-scroll::-webkit-scrollbar-track { background: transparent; }
 .fp-scroll::-webkit-scrollbar-thumb { @apply bg-border rounded-full; }

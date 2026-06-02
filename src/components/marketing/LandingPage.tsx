@@ -135,7 +135,7 @@ export function LandingPage() {
 
       {/* ══ HERO ═══════════════════════════════════════════════════ */}
       <section className="relative flex min-h-screen items-center justify-center px-5 pb-20 pt-24 text-white">
-        <HeroGeometric color1="#1B7C8A" color2="#0A1628" />
+        <HeroGeometric color1="#0891B2" color2="#08112A" />
 
         {/* Floating geometric decorations */}
         <div className="pointer-events-none absolute inset-0 overflow-hidden">

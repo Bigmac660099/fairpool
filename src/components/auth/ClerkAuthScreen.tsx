@@ -25,7 +25,7 @@ export function ClerkAuthScreen({ mode }: { mode: "sign-in" | "sign-up" }) {
   // Teal-themed Clerk appearance.
   const appearance = {
     variables: {
-      colorPrimary: "#1B7C8A",
+      colorPrimary: "#0891B2",
       colorBackground: "rgba(255,255,255,0.06)",
       colorText: "#ffffff",
       colorInputBackground: "rgba(255,255,255,0.08)",
@@ -41,7 +41,7 @@ export function ClerkAuthScreen({ mode }: { mode: "sign-in" | "sign-up" }) {
 
   return (
     <main className="relative flex min-h-screen items-center justify-center px-4 py-10">
-      <HeroGeometric color1="#1B7C8A" color2="#0A1628" />
+      <HeroGeometric color1="#0891B2" color2="#08112A" />
       {mode === "sign-in" ? (
         <SignIn appearance={appearance} signUpUrl="/sign-up" forceRedirectUrl="/dashboard" />
       ) : (

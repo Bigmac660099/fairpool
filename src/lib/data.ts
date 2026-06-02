@@ -26,7 +26,7 @@ import { withinRadius, haversineMeters } from "./geo";
  * one-vote-per-person, and a simple per-user rate limit.
  */
 
-const STORAGE_KEY = "fairpool:v2";
+const STORAGE_KEY = "fairpool:v3";
 const SESSION_KEY = "fairpool:session";
 // Re-auth is required after this much inactivity (3 hours).
 export const INACTIVITY_MS = 3 * 60 * 60 * 1000;

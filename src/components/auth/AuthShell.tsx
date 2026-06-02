@@ -20,8 +20,8 @@ export function AuthShell({ initialTab }: { initialTab: "login" | "register" }) 
 
   const palette =
     tab === "login"
-      ? { color1: "#1B7C8A", color2: "#0A1628" }
-      : { color1: "#2BB7B0", color2: "#08222B" };
+      ? { color1: "#0891B2", color2: "#08112A" }   /* cyan-primary on deep navy */
+      : { color1: "#06B6D4", color2: "#061625" };   /* brighter cyan, deeper navy */
 
   return (
     <main className="relative flex min-h-screen items-center justify-center overflow-y-auto px-4 py-10">

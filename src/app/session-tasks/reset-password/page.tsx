@@ -21,7 +21,7 @@ const HeroGeometric = dynamic(
 
 const clerkAppearance = {
   variables: {
-    colorPrimary: "#1B7C8A",
+    colorPrimary: "#0891B2",
     colorBackground: "rgba(255,255,255,0.06)",
     colorText: "#ffffff",
     colorInputBackground: "rgba(255,255,255,0.08)",
@@ -39,7 +39,7 @@ export default function ResetPasswordPage() {
   if (!isClerkMode) {
     return (
       <main className="relative flex min-h-screen items-center justify-center px-4">
-        <HeroGeometric color1="#1B7C8A" color2="#0A1628" />
+        <HeroGeometric color1="#0891B2" color2="#08112A" />
         <div className="relative z-10 w-full max-w-md rounded-2xl border border-white/15 bg-white/5 p-8 text-center backdrop-blur-xl">
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-2xl font-bold text-primary-foreground">
             F
@@ -59,7 +59,7 @@ export default function ResetPasswordPage() {
 
   return (
     <main className="relative flex min-h-screen items-center justify-center px-4 py-10">
-      <HeroGeometric color1="#1B7C8A" color2="#0A1628" />
+      <HeroGeometric color1="#0891B2" color2="#08112A" />
       <SignIn
         appearance={clerkAppearance}
         signUpUrl="/sign-up"

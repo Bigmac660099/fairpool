@@ -86,8 +86,8 @@ const config: Config = {
         "card":       "0 1px 3px 0 rgba(0,0,0,0.07), 0 1px 2px -1px rgba(0,0,0,0.07)",
         "card-md":    "0 4px 12px -2px rgba(0,0,0,0.09), 0 2px 6px -2px rgba(0,0,0,0.07)",
         "card-lg":    "0 8px 24px -4px rgba(0,0,0,0.12), 0 4px 8px -4px rgba(0,0,0,0.08)",
-        "primary-sm": "0 1px 3px 0 hsl(185 65% 32% / 0.25)",
-        "primary-md": "0 4px 12px -2px hsl(185 65% 32% / 0.3)",
+        "primary-sm": "0 1px 3px 0 hsl(192 91% 37% / 0.28)",
+        "primary-md": "0 4px 14px -2px hsl(192 91% 37% / 0.35)",
       },
 
       keyframes: {

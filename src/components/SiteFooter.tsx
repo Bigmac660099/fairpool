@@ -59,11 +59,11 @@ export function SiteFooter() {
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={logoUrl} alt={brandName} className="h-10 w-10 rounded-xl object-cover" />
               ) : (
-                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-teal-400 font-black text-white shadow-glow-sm">
+                <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-xs font-black text-primary-foreground">
                   FP
                 </span>
               )}
-              <span className="fp-gradient text-lg font-black tracking-tighter">{brandName}</span>
+              <span className="text-base font-bold tracking-tight">{brandName}</span>
             </div>
             <p className="mb-5 max-w-xs text-sm leading-relaxed text-muted-foreground">
               {footer.description}
@@ -110,7 +110,7 @@ export function SiteFooter() {
       {/* ── Copyright bar ────────────────────────────────────────── */}
       <div className="bg-background/50">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-5 py-4 text-xs text-muted-foreground">
-          <span>{footer.copyright}</span>
+          <span suppressHydrationWarning>{footer.copyright}</span>
           <span className="flex items-center gap-1.5 text-primary">
             <ShieldCheck className="h-3.5 w-3.5" />
             SSL সুরক্ষিত
